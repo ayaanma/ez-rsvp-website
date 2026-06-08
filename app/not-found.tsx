@@ -1,0 +1,2 @@
+import { ButtonLink } from "@/components/ButtonLink";
+export default function NotFound() { return <main className="mx-auto max-w-3xl px-4 py-20 text-center"><h1 className="text-5xl font-black tracking-[-0.06em]">Mystery not found.</h1><p className="mt-4 text-[#11081f]/62">That RSVP does not exist in the mock data.</p><div className="mt-8"><ButtonLink href="/dashboard">Back to dashboard</ButtonLink></div></main> }

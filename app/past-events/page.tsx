@@ -1,0 +1,3 @@
+import { PastEventCard } from "@/components/PastEventCard";
+import { events, rsvps } from "@/lib/mock-data";
+export default function PastEventsPage() { const past = rsvps.filter(r => r.status === 'attended'); return <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8"><h1 className="text-4xl font-black">Past events</h1><p className="mt-3 text-[#11081f]/62">Rate the surprise, reflect, and train future recommendations.</p><section className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">{past.map(r => <PastEventCard key={r.id} rsvp={r} event={events.find(e => e.id === r.eventId)!}/>)}</section></main> }
