@@ -1,55 +1,51 @@
-import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { events } from "@/lib/mock-data";
+import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "nodejs";
+export async function POST(request: NextRequest) {
+  const body = await request.json().catch(() => null) as {
+    eventId?: string;
+    name?: string;
+    price?: number;
+    description?: string;
+  } | null;
 
-export async function POST(request: Request) {
-  const { eventId } = (await request.json()) as { eventId?: string };
-  const event = events.find((item) => item.id === eventId);
-
-  if (!event) {
-    return NextResponse.json({ error: "Event not found." }, { status: 404 });
+  if (!body?.name || typeof body.price !== "number") {
+    return NextResponse.json({ error: "Missing ticket information." }, { status: 400 });
   }
 
-  const secretKey = process.env.STRIPE_SECRET_KEY;
-  const appUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    process.env.VERCEL_PROJECT_PRODUCTION_URL?.replace(/^/, "https://") ??
-    "http://localhost:3000";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-  if (!secretKey) {
+  if (!stripeSecretKey) {
     return NextResponse.json({
       demo: true,
-      message:
-        "Demo purchase complete. Add STRIPE_SECRET_KEY to enable real Stripe Checkout.",
+      url: `/dashboard?checkout=demo&eventId=${encodeURIComponent(body.eventId ?? "event")}`
     });
   }
 
-  const stripe = new Stripe(secretKey);
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          unit_amount: Math.max(0, Math.round(event.price * 100)),
-          product_data: {
-            name: event.name === "Location Hidden" ? "Mystery RSVP ticket" : event.name,
-            description: event.description,
-          },
-        },
-        quantity: 1,
-      },
-    ],
-    metadata: {
-      eventId: event.id,
-      source: "ez-rsvp",
+  const params = new URLSearchParams();
+  params.set("mode", "payment");
+  params.set("success_url", `${siteUrl}/dashboard?checkout=success&eventId=${encodeURIComponent(body.eventId ?? "event")}`);
+  params.set("cancel_url", `${siteUrl}/create-rsvp?checkout=cancelled`);
+  params.set("line_items[0][quantity]", "1");
+  params.set("line_items[0][price_data][currency]", "usd");
+  params.set("line_items[0][price_data][unit_amount]", String(Math.max(0, Math.round(body.price * 100))));
+  params.set("line_items[0][price_data][product_data][name]", body.name);
+  params.set("line_items[0][price_data][product_data][description]", body.description || "e-z.rsvp ticket");
+
+  const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${stripeSecretKey}`,
+      "Content-Type": "application/x-www-form-urlencoded"
     },
-    success_url: `${appUrl}/dashboard?checkout=success&event=${event.id}`,
-    cancel_url: `${appUrl}/create-rsvp?checkout=cancelled&event=${event.id}`,
+    body: params
   });
 
-  return NextResponse.json({ url: session.url });
+  const data = await stripeResponse.json().catch(() => ({}));
+
+  if (!stripeResponse.ok) {
+    return NextResponse.json({ error: data.error?.message || "Stripe checkout failed." }, { status: stripeResponse.status });
+  }
+
+  return NextResponse.json({ url: data.url });
 }

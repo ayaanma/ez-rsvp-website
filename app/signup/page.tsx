@@ -1,34 +1,101 @@
-import Link from "next/link";
-import type { Route } from "next";
+"use client";
 
-function ProviderButton({
-  provider,
-  icon,
-  href,
-}: {
-  provider: string;
-  icon: string;
-  href: Route;
-}) {
-  return (
-    <Link className="auth-provider-button" href={href}>
-      <span className="auth-provider-icon">{icon}</span>
-      <span>Sign in with {provider}</span>
-    </Link>
-  );
-}
+import { FormEvent, useState } from "react";
+import Link from "next/link";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "signup", name, email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.message || "Unable to create account.");
+      }
+
+      window.location.href = data.redirectTo || "/dashboard";
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to create account.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main className="main-shell auth-wrap">
-      <div className="auth-card">
+      <section className="auth-card">
+        <p className="page-kicker">Start your next plan.</p>
         <h1 className="section-title">Create account</h1>
-        <p className="section-copy">Create your e-z.rsvp demo account using a social sign-in.</p>
-        <div className="auth-provider-stack">
-          <ProviderButton provider="Google" icon="G" href="/dashboard" />
-          <ProviderButton provider="Apple" icon="" href="/dashboard" />
-        </div>
-      </div>
+        <p className="section-copy">Create an account manually, or continue with Google.</p>
+
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label className="small-label" htmlFor="name">Name</label>
+          <input
+            id="name"
+            className="input"
+            type="text"
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Your name"
+            required
+          />
+
+          <label className="small-label" htmlFor="email">Email</label>
+          <input
+            id="email"
+            className="input"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="you@example.com"
+            required
+          />
+
+          <label className="small-label" htmlFor="password">Password</label>
+          <input
+            id="password"
+            className="input"
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="Create a password"
+            minLength={6}
+            required
+          />
+
+          {error && <p className="form-error">{error}</p>}
+
+          <button className="btn btn-primary auth-submit" type="submit" disabled={loading}>
+            {loading ? "Creating account..." : "Create account"}
+          </button>
+        </form>
+
+        <div className="auth-divider"><span>or</span></div>
+
+        <a className="auth-provider-button" href="/auth/oauth?provider=google">
+          <span className="auth-provider-icon">G</span>
+          <span>Sign in with Google</span>
+        </a>
+
+        <p className="auth-switch">
+          Already have an account? <Link href="/login">Log in</Link>
+        </p>
+      </section>
     </main>
   );
 }
