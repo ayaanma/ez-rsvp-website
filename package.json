@@ -12,12 +12,17 @@
     "@types/node": "^22.10.2",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "clsx": "^2.1.1",
     "eslint": "^9.17.0",
     "eslint-config-next": "16.2.7",
+    "lucide-react": "^1.17.0",
     "next": "16.2.7",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "tailwind-merge": "^3.6.0",
     "typescript": "^5.7.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0"
+  }
 }
