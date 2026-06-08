@@ -40,7 +40,9 @@ function EventPurchaseOverlay({
 
         <div className="dashboard-grid modal-grid">
           <div className="modal-details">
-            <h2 className="section-title">What you can expect</h2>
+            <RSVPCard event={event} locked={false} categoryLabel={event.category} hideCategory={mysteryMode} forceLocationHidden={mysteryMode} hiddenTitle={hiddenTitle ?? "Mystery RSVP"} />
+
+            <h2 className="section-title" style={{ marginTop: 24 }}>What you can expect</h2>
             <p className="section-copy">
               {mysteryMode
                 ? "A verified public venue, clear entry instructions, and a plan that fits your selected budget and radius."
@@ -52,10 +54,6 @@ function EventPurchaseOverlay({
                 : `This plan starts in ${event.city}. Tickets are limited, and your group members can join before the reveal window closes.`}
             </p>
 
-            <button className="btn btn-primary icon-button" type="button" onClick={() => purchaseTickets(event)} style={{ marginTop: 24 }}>
-              <img src="/icons/cart.svg" alt="" aria-hidden="true" />
-              <span>Purchase tickets</span>
-            </button>
           </div>
 
           <aside className="sidebar-card">
@@ -78,6 +76,11 @@ function EventPurchaseOverlay({
                 <div><h3>Dress code</h3><p>{event.dressCode ?? "Comfortable casual"}</p></div>
               </div>
             </div>
+
+            <button className="btn btn-primary icon-button purchase-button" type="button" onClick={() => purchaseTickets(event)}>
+              <img src="/icons/cart.svg" alt="" aria-hidden="true" />
+              <span>Purchase tickets</span>
+            </button>
           </aside>
         </div>
       </section>

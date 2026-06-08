@@ -76,17 +76,12 @@ export async function purchaseTickets(event: EventItem) {
     })
   });
 
-  if (!response.ok) {
-    window.alert("Ticket checkout is temporarily unavailable. Please try again.");
+  const data = (await response.json().catch(() => ({}))) as { url?: string; error?: string };
+
+  if (!response.ok || !data.url) {
+    window.alert(data.error || "Ticket checkout is temporarily unavailable. Please try again.");
     return;
   }
 
-  const data = (await response.json()) as { url?: string; demo?: boolean };
-
-  if (data.url) {
-    window.location.href = data.url;
-    return;
-  }
-
-  window.alert("Demo checkout completed.");
+  window.location.assign(data.url);
 }

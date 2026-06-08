@@ -305,3 +305,141 @@ label.small-label, .small-label { font-size: .82rem; color: var(--muted); font-w
 
 .rsvp-card:not(.image-card) .rsvp-card-bg.image-bg,
 .events-grid .rsvp-card:not(.image-card) .rsvp-card-bg.image-bg { background-image: none; }
+
+.page-kicker {
+  margin-bottom: 8px;
+}
+
+.hero h1,
+.page-title {
+  margin-top: 8px;
+}
+
+.auth-card .page-kicker,
+.section-head .page-kicker {
+  margin-bottom: 6px;
+}
+
+.auth-form-spaced .auth-submit {
+  margin-top: 12px;
+}
+
+.auth-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 26px 0 18px;
+  color: var(--muted);
+  font-size: .86rem;
+  font-weight: 650;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+}
+
+.auth-divider span {
+  padding: 0 14px;
+}
+
+.auth-switch {
+  margin-top: 22px;
+  color: #8a8d99;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: var(--shadow-grey);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.profile-menu-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-trigger {
+  font-size: .78rem;
+  font-weight: 850;
+}
+
+.profile-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 152px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-hover);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+}
+
+.profile-menu-wrap:hover .profile-menu,
+.profile-menu-wrap:focus-within .profile-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.profile-menu a,
+.profile-menu button {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--shadow-grey);
+  display: block;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.profile-menu a:hover,
+.profile-menu button:hover {
+  background: var(--wash);
+}
+
+.sidebar-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.purchase-button {
+  width: 100%;
+  margin-top: 24px;
+}
+
+.input::placeholder,
+.subtle-placeholder::placeholder {
+  color: #b6bac5;
+}
+
+.planning-section .section-title {
+  line-height: 1.05;
+}
+
+@media (max-width: 620px) {
+  .profile-menu-wrap {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+}

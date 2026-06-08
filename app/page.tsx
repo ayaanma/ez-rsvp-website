@@ -12,7 +12,7 @@ export default function HomePage() {
     <main className="main-shell home-page">
       <section className="hero">
         <div>
-          <h1>RSVP now. Find out where <span className="later-blue">later</span>.</h1>
+          <h1>RSVP now. Find out where <span className="later-blue">later.</span></h1>
           <p>It&apos;s time to make going out easy. It&apos;s our job to plan the events. All you have to do is show up.</p>
           <div className="hero-actions">
             <Link className="btn btn-primary" href="/signup">Let&apos;s get started →</Link>
@@ -29,7 +29,7 @@ export default function HomePage() {
 
       <section className="section planning-section">
         <div className="section-head">
-          <h2 className="section-title">Planning is hard. We make it e-z.</h2>
+          <h2 className="section-title">Planning is hard. We<br />make it e-z.</h2>
           <p className="section-copy">e-z.rsvp makes going out a much more stress-free, streamlined experience. Choose your timing, budget, and relative location, and we&apos;ll handle venues, activities, and everything in between. You can get all the fun of spontaneity without the stress of planning every detail.</p>
         </div>
       </section>

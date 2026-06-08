@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { setStoredUser } from "@/lib/auth-client";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -28,6 +29,11 @@ export default function SignupPage() {
         throw new Error(data.message || "Unable to create account.");
       }
 
+      setStoredUser({
+        name: data.user?.name || name || email.split("@")[0] || "e-z.rsvp user",
+        email: data.user?.email || email
+      });
+
       window.location.href = data.redirectTo || "/dashboard";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to create account.");
@@ -43,7 +49,7 @@ export default function SignupPage() {
         <h1 className="section-title">Create account</h1>
         <p className="section-copy">Create an account manually, or continue with Google.</p>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
+        <form className="auth-form auth-form-spaced" onSubmit={handleSubmit}>
           <label className="small-label" htmlFor="name">Name</label>
           <input
             id="name"

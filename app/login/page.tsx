@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { setStoredUser } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -27,6 +28,11 @@ export default function LoginPage() {
         throw new Error(data.message || "Unable to log in.");
       }
 
+      setStoredUser({
+        name: data.user?.name || email.split("@")[0] || "e-z.rsvp user",
+        email: data.user?.email || email
+      });
+
       window.location.href = data.redirectTo || "/dashboard";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to log in.");
@@ -42,7 +48,7 @@ export default function LoginPage() {
         <h1 className="section-title">Log in</h1>
         <p className="section-copy">Use your email and password, or continue with Google.</p>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
+        <form className="auth-form auth-form-spaced" onSubmit={handleSubmit}>
           <label className="small-label" htmlFor="email">Email</label>
           <input
             id="email"

@@ -127,12 +127,7 @@ function DetailOverlay({ selected, onClose }: { selected: SelectedItem | null; o
               </p>
             </div>
 
-            {!locked && (
-              <div className="group-overlay-actions">
-                <button className="btn btn-primary" type="button" onClick={() => addEventToCalendar(event)}>Add to calendar</button>
-                <button className="btn btn-secondary" type="button" onClick={() => shareEvent(event)}>Share</button>
-              </div>
-            )}
+
           </div>
 
           <aside className="sidebar-card">
@@ -155,6 +150,13 @@ function DetailOverlay({ selected, onClose }: { selected: SelectedItem | null; o
                 <div><h3>Dress code</h3><p>{event.dressCode ?? "Comfortable casual"}</p></div>
               </div>
             </div>
+
+            {!locked && (
+              <div className="sidebar-actions">
+                <button className="btn btn-primary" type="button" onClick={() => addEventToCalendar(event)}>Add to calendar</button>
+                <button className="btn btn-secondary" type="button" onClick={() => shareEvent(event)}>Share</button>
+              </div>
+            )}
           </aside>
         </div>
       </section>

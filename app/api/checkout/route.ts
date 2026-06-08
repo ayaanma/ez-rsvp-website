@@ -16,10 +16,10 @@ export async function POST(request: NextRequest) {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
   if (!stripeSecretKey) {
-    return NextResponse.json({
-      demo: true,
-      url: `/dashboard?checkout=demo&eventId=${encodeURIComponent(body.eventId ?? "event")}`
-    });
+    return NextResponse.json(
+      { error: "Stripe is not configured. Add STRIPE_SECRET_KEY in Vercel to enable checkout." },
+      { status: 501 }
+    );
   }
 
   const params = new URLSearchParams();
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   params.set("cancel_url", `${siteUrl}/create-rsvp?checkout=cancelled`);
   params.set("line_items[0][quantity]", "1");
   params.set("line_items[0][price_data][currency]", "usd");
-  params.set("line_items[0][price_data][unit_amount]", String(Math.max(0, Math.round(body.price * 100))));
+  params.set("line_items[0][price_data][unit_amount]", String(Math.max(50, Math.round(body.price * 100))));
   params.set("line_items[0][price_data][product_data][name]", body.name);
   params.set("line_items[0][price_data][product_data][description]", body.description || "e-z.rsvp ticket");
 
@@ -43,8 +43,11 @@ export async function POST(request: NextRequest) {
 
   const data = await stripeResponse.json().catch(() => ({}));
 
-  if (!stripeResponse.ok) {
-    return NextResponse.json({ error: data.error?.message || "Stripe checkout failed." }, { status: stripeResponse.status });
+  if (!stripeResponse.ok || !data.url) {
+    return NextResponse.json(
+      { error: data.error?.message || "Stripe checkout failed." },
+      { status: stripeResponse.status || 500 }
+    );
   }
 
   return NextResponse.json({ url: data.url });
