@@ -9,6 +9,7 @@ export interface EventItem {
   address: string;
   city: string;
   area: string;
+  neighborhood?: string;
   startTime: string;
   endTime: string;
   price: number;
@@ -23,6 +24,30 @@ export interface EventItem {
   groupMembersGoing?: GroupMember[];
   imageUrl?: string;
   imageBlurred?: boolean;
+  ticketDetails?: string;
+  verified?: boolean;
+}
+
+export interface GroupMember {
+  id: string;
+  name: string;
+  initials: string;
+  attendingEventId?: string;
+  avatarGradient?: string;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  members: GroupMember[];
+  readiness: number;
+  code: string;
+  role: "Owner" | "Member";
+  ownerUserId?: string;
+  icon: string;
+  upcomingPlan: string;
+  upcomingDateTime: string;
+  memberStatuses?: Record<string, string>;
 }
 
 export interface RSVP {
@@ -39,25 +64,6 @@ export interface RSVP {
   createdAt: string;
 }
 
-export interface GroupMember {
-  id: string;
-  name: string;
-  initials: string;
-}
-
-export interface Group {
-  id: string;
-  name: string;
-  members: GroupMember[];
-  readiness: number;
-  code: string;
-  role: "Owner" | "Member";
-  icon: string;
-  upcomingPlan: string;
-  upcomingDateTime: string;
-  memberStatuses?: Record<string, string>;
-}
-
 export interface PastEvent {
   id: string;
   name: string;
@@ -67,3 +73,6 @@ export interface PastEvent {
   address: string;
   wouldDoAgain: string;
 }
+
+export type Event = EventItem;
+export type RSVPGroup = Group;

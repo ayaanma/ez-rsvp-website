@@ -42,7 +42,7 @@ export function AccountSettingsForm() {
       <section className="glass-card grid gap-5 rounded-[1.75rem] p-6">
         <SectionHeader icon={SlidersHorizontal} title="Defaults" description="Set your normal city, radius, and favorite event categories." />
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="grid gap-2 text-sm font-black text-[#11081f]/72">Default city<input className="dark-field rounded-2xl px-4 py-3 outline-none focus:border-[#b000b8]/40" defaultValue={currentUser.defaultCity}/></label>
+          <label className="grid gap-2 text-sm font-black text-[#11081f]/72">Default city<input className="dark-field rounded-2xl px-4 py-3 outline-none focus:border-[#b000b8]/40" defaultValue={currentUser.defaultAddress}/></label>
           <label className="grid gap-2 text-sm font-black text-[#11081f]/72">Default radius<input className="dark-field rounded-2xl px-4 py-3 outline-none focus:border-[#b000b8]/40" defaultValue={`${userPreferences.defaultRadius} miles`}/></label>
         </div>
         <div>

@@ -6,7 +6,7 @@ function AvatarStack({ members }: { members: RSVPGroup["members"] }) {
   return (
     <div className="flex -space-x-3">
       {members.slice(0, 5).map((member) => (
-        <div key={member.id} title={member.name} className={`grid size-11 place-items-center rounded-full bg-gradient-to-br ${member.avatarGradient} text-xs font-black text-white shadow-md ring-2 ring-white`}>
+        <div key={member.id} title={member.name} className={`grid size-11 place-items-center rounded-full bg-gradient-to-br ${member.avatarGradient ?? "from-[#91C4F2] to-[#8CA0D7]"} text-xs font-black text-white shadow-md ring-2 ring-white`}>
           {member.initials}
         </div>
       ))}
@@ -53,7 +53,7 @@ export function GroupCard({ group }: { group: RSVPGroup }) {
             const event = events.find((item) => item.id === member.attendingEventId);
             return (
               <div key={member.id} className="flex items-center gap-3 rounded-2xl bg-white p-2 shadow-sm ring-1 ring-black/[0.04]">
-                <div className={`grid size-9 place-items-center rounded-full bg-gradient-to-br ${member.avatarGradient} text-[11px] font-black text-white ring-2 ring-white`}>{member.initials}</div>
+                <div className={`grid size-9 place-items-center rounded-full bg-gradient-to-br ${member.avatarGradient ?? "from-[#91C4F2] to-[#8CA0D7]"} text-[11px] font-black text-white ring-2 ring-white`}>{member.initials}</div>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-black text-[#11081f]">{member.name}</p>
                   <p className="truncate text-xs text-[#11081f]/45">{event ? `${event.neighborhood} · ${event.price === 0 ? "Free" : `$${event.price}`}` : "Mystery RSVP pending"}</p>

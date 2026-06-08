@@ -17,7 +17,7 @@ function FriendsGoing({ eventId }: { eventId: string }) {
           <div
             key={friend.id}
             title={friend.name}
-            className={`grid size-8 place-items-center rounded-full bg-gradient-to-br ${friend.avatarGradient} text-[10px] font-black text-white shadow-md ring-2 ring-white`}
+            className={`grid size-8 place-items-center rounded-full bg-gradient-to-br ${friend.avatarGradient ?? "from-[#91C4F2] to-[#8CA0D7]"} text-[10px] font-black text-white shadow-md ring-2 ring-white`}
           >
             {friend.initials}
           </div>
@@ -32,7 +32,7 @@ function FriendsGoing({ eventId }: { eventId: string }) {
 
 export function MysteryEventCard({ rsvp, event, hideCategory = false }: { rsvp: RSVP; event: Event; hideCategory?: boolean }) {
   const revealed = canRevealEvent(event.startTime) || rsvp.status === "revealed" || rsvp.status === "attended";
-  const remainingTickets = Math.max(event.capacity - rsvp.groupSize, 1);
+  const remainingTickets = event.remainingTickets ?? Math.max(event.capacity - 1, 1);
   const showSoonCountdown = revealed && rsvp.status !== "attended";
 
   return (
@@ -62,8 +62,8 @@ export function MysteryEventCard({ rsvp, event, hideCategory = false }: { rsvp: 
             <p className="flex items-center gap-2"><Users size={16} /> {remainingTickets} remaining tickets</p>
           </div>
           <FriendsGoing eventId={event.id} />
-          {!revealed && <CountdownTimer targetIso={rsvp.revealAt} />}
-          {showSoonCountdown && <CountdownTimer targetIso={event.startTime} variant="featured" />}
+          {!revealed && <CountdownTimer target={rsvp.revealAt} />}
+          {showSoonCountdown && <CountdownTimer target={event.startTime} soon />}
           <p className="text-sm font-black text-[#b000b8] transition duration-300 group-hover:translate-x-1">View RSVP →</p>
         </div>
       </article>

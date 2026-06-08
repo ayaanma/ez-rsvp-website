@@ -1,6 +1,15 @@
 import Link from "next/link";
+import type { Route } from "next";
 
-function ProviderButton({ provider, icon, href }: { provider: string; icon: string; href: string }) {
+function ProviderButton({
+  provider,
+  icon,
+  href,
+}: {
+  provider: string;
+  icon: string;
+  href: Route;
+}) {
   return (
     <Link className="auth-provider-button" href={href}>
       <span className="auth-provider-icon">{icon}</span>

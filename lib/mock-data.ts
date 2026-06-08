@@ -33,7 +33,9 @@ export const events: EventItem[] = [
     safetyNotes: "Verified public venue with staffed entry.",
     organizerName: "Night Circuit",
     color: "baby",
-    groupMembersGoing: [members[0], members[1], members[2]]
+    groupMembersGoing: [members[0], members[1], members[2]],
+    ticketDetails: "Entry included with RSVP",
+    verified: true
   },
   {
     id: "evt-2",
@@ -57,7 +59,9 @@ export const events: EventItem[] = [
     color: "apricot",
     imageUrl: "/event-images/fifty-four-venue.png",
     imageBlurred: true,
-    groupMembersGoing: [members[1], members[3]]
+    groupMembersGoing: [members[1], members[3]],
+    ticketDetails: "Entry included with RSVP",
+    verified: true
   },
   {
     id: "evt-3",
@@ -75,7 +79,9 @@ export const events: EventItem[] = [
     capacity: 40,
     organizerName: "Soft Signal Arts",
     color: "wisteria",
-    groupMembersGoing: [members[0], members[2]]
+    groupMembersGoing: [members[0], members[2]],
+    ticketDetails: "Entry included with RSVP",
+    verified: true
   },
   {
     id: "evt-4",
@@ -93,7 +99,9 @@ export const events: EventItem[] = [
     capacity: 60,
     organizerName: "Laughline",
     color: "amethyst",
-    groupMembersGoing: [members[2], members[3]]
+    groupMembersGoing: [members[2], members[3]],
+    ticketDetails: "Entry included with RSVP",
+    verified: true
   },
   {
     id: "evt-5",
@@ -111,7 +119,10 @@ export const events: EventItem[] = [
     capacity: 34,
     organizerName: "Soft Plans Club",
     color: "baby",
-    groupMembersGoing: [members[0], members[3]]
+    groupMembersGoing: [members[0], members[3]],
+    ticketDetails: "Entry included with RSVP",
+    verified: true
+
   }
 ];
 
@@ -131,3 +142,42 @@ export const groups: Group[] = [
   { id: "g1", name: "Friday Adventure Squad", members: [members[0], members[1], members[2], members[3]], readiness: 50, code: "FRIDAY", role: "Owner", icon: "☾", upcomingPlan: "Secret Warehouse Rave", upcomingDateTime: "July 7th at 8 PM", memberStatuses: { m1: "RSVP'd yes", m2: "Haven't RSVP'd yet", m3: "Haven't RSVP'd yet", m4: "RSVP'd yes" } },
   { id: "g2", name: "Rutgers Crew", members: [members[3], members[0], members[1]], readiness: 66, code: "RUKNGT", role: "Member", icon: "◈", upcomingPlan: "Gallery night", upcomingDateTime: "July 12th at 7 PM", memberStatuses: { m4: "RSVP'd yes", m1: "RSVP'd no", m2: "RSVP'd yes" } }
 ];
+
+export const currentUser = {
+  id: "user-1",
+  name: "Ayaan Malik",
+  email: "ayaan@example.com",
+  phone: "(732) 555-0198",
+  defaultAddress: "New York, NY"
+};
+
+export const userPreferences = {
+  defaultRadius: 12,
+  favoriteCategories: ["Nightlife", "Dining", "Culture", "Comedy"],
+
+  notificationPreferences: [
+    "Reveal reminders",
+    "Group activity",
+    "Event changes",
+    "Weekly ideas"
+  ],
+
+  safetyPreferences: [
+    "Verified organizers only",
+    "Emergency contact",
+    "Accessibility notes"
+  ],
+
+  notifications: {
+    revealReminders: true,
+    groupActivity: true,
+    eventChanges: true,
+    weeklyIdeas: false
+  },
+
+  safety: {
+    verifiedOrganizersOnly: true,
+    emergencyContact: true,
+    accessibilityNotes: true
+  }
+};
