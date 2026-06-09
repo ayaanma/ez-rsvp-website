@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./interaction-fixes.css";
-import "./homepage-fixes.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 

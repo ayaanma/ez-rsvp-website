@@ -45,7 +45,7 @@ export default function PrivacyPolicyPage() {
         {
           title: "Your choices",
           body: [
-            "You can update account preferences from your account page. You can also log out, stop using the service, or request support related to account information." 
+            "You can update account preferences from your account page. You can also log out, stop using the service, or request support related to account information."
           ],
         },
       ]}

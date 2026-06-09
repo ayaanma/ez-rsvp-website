@@ -223,7 +223,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   .card, .sidebar-card, .filters-panel { padding:20px; border-radius:24px; }
 }
 
-/* v14 refinements */
 .hero h1, .page-title, .section-title {
   letter-spacing: 0.005em;
   font-weight: 760;
@@ -422,7 +421,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   .modal-card { padding: 24px 16px; border-radius: 26px; }
 }
 
-/* v15 requested refinements */
 .hero h1, .page-title, .section-title {
   font-weight: 850;
   letter-spacing: -0.012em;
@@ -475,7 +473,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
 }
 .event-description-card p:last-child { margin-bottom: 0; }
 
-/* Faster, smoother FAQ open/close animation */
 .faq-panel {
   display: block;
   max-height: 0;
@@ -499,7 +496,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
 }
 .faq-panel > p { padding: 0; }
 
-/* Toggle version used on Find Events */
 .compact-toggle {
   padding: 0;
   border: 0;
@@ -511,7 +507,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   border-color: #e5e6eb;
 }
 
-/* Remove separators in account toggles */
 .toggle-row {
   border-bottom: 0 !important;
 }
@@ -519,12 +514,10 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   gap: 18px;
 }
 
-/* Keep find-event cards off the grey palette */
 .events-grid .rsvp-card-bg.shadow {
   background: var(--wisteria-blue);
 }
 
-/* v16 palette/card/category refinements */
 .hero h1, .page-title, .section-title {
   font-weight: 860 !important;
   letter-spacing: -0.006em;
@@ -626,7 +619,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   border-color: #ebecef;
 }
 
-/* v17 polish requests */
 .later-blue { color: var(--baby-blue); }
 .icon-circle { background: #fff !important; border: 1px solid var(--line); box-shadow: 0 12px 26px rgba(39,41,50,.08); }
 .icon-circle img { display:block; }
@@ -687,7 +679,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   font-size: clamp(2.4rem, 5vw, 4rem);
 }
 
-/* v18 polish: smooth cylindrical avatar reveal, real image cards, and matching group status tones */
 .avatar-expand {
   width: 36px !important;
   height: 36px !important;
@@ -757,8 +748,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
 .avatar-tone-3 { background: var(--amethyst-smoke) !important; color: var(--shadow-grey) !important; }
 .avatar-tone-4 { background: var(--wisteria-blue) !important; color: var(--shadow-grey) !important; }
 
-
-/* v19 interaction and page refinements */
 .card-button .rsvp-card {
   pointer-events: auto !important;
 }
@@ -792,7 +781,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   pointer-events: none;
 }
 
-/* v20 find-event sorting, overlay icons, and group actions */
 .history-icon-img {
   width: 24px;
   height: 24px;
@@ -814,7 +802,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   cursor: pointer;
 }
 
-/* v22 social auth, app store heading placement, icon buttons */
 .auth-provider-stack {
   display: grid;
   gap: 12px;
@@ -864,8 +851,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   object-fit: contain;
 }
 
-
-/* v23 button alignment fixes */
 .btn.icon-button {
   width: auto !important;
   height: auto !important;
@@ -890,7 +875,6 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   border: 0 !important;
 }
 
-/* v24: keep cart icon white on primary Purchase tickets button */
 .btn.icon-button.btn-primary img {
   filter: brightness(0) invert(1) !important;
 }
@@ -1182,4 +1166,265 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
 .custom-select-option.selected {
   background: var(--shadow-grey);
   color: #fff;
+}
+
+.profile-menu-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-trigger {
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 80;
+  min-width: 165px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 45px rgba(39, 41, 50, 0.14);
+  padding: 8px;
+}
+
+.profile-menu::before {
+  content: "";
+  position: absolute;
+  inset: -12px 0 auto;
+  height: 12px;
+}
+
+.profile-menu-item {
+  width: 100%;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--shadow-grey);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.profile-menu-item:hover {
+  background: var(--wash-strong);
+}
+
+.auth-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.auth-submit {
+  margin-top: 16px;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 18px;
+  margin: 30px 0 18px;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.auth-divider span {
+  display: block;
+  flex: 1 1 auto;
+  height: 1px;
+  min-width: 0;
+  background: var(--line);
+}
+
+.auth-divider small {
+  display: block;
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 0.98rem;
+  font-weight: 760;
+  line-height: 1;
+}
+
+.auth-switch-text {
+  margin: 20px 0 0;
+  color: #8a8d98;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.auth-switch-text a {
+  color: var(--shadow-grey);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.form-error {
+  color: #9f2737;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.compact-kicker {
+  margin-bottom: 6px !important;
+}
+
+.auth-title {
+  margin-top: 0 !important;
+}
+
+.avatar-expand {
+  transition:
+    width 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    max-width 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    min-width 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.32s ease,
+    transform 0.32s ease !important;
+}
+
+.avatar-expand .avatar-full-name {
+  transition:
+    opacity 0.26s ease 0.08s,
+    max-width 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    margin-left 0.46s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.overlay-action-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+  margin-bottom: 22px;
+}
+
+.overlay-action-row .btn {
+  width: 100%;
+}
+
+.purchase-button {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.account-placeholder::placeholder {
+  color: #a8adb8;
+  opacity: 1;
+}
+
+.favorite-section .small-label {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.favorite-btn.selected {
+  background: var(--shadow-grey);
+  border-color: var(--shadow-grey);
+  color: #fff;
+}
+
+.event-overlay-review,
+.past-event-review,
+.your-review,
+.review-section {
+  margin-top: 18px;
+}
+
+@media (max-width: 620px) {
+  .overlay-action-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.anticipation-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
+  align-items: center;
+  gap: 54px;
+  padding-top: 88px;
+  padding-bottom: 88px;
+}
+
+.anticipation-copy {
+  max-width: 900px;
+}
+
+.anticipation-copy .section-title {
+  max-width: 850px;
+  margin-bottom: 18px;
+}
+
+.anticipation-copy .section-copy {
+  max-width: 890px;
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.anticipation-chips {
+  margin-top: 32px;
+}
+
+.anticipation-preview {
+  display: flex;
+  justify-content: center;
+}
+
+.anticipation-preview .rsvp-card {
+  width: min(430px, 100%);
+  min-height: 260px;
+  border-radius: 28px;
+  box-shadow: 0 26px 70px rgba(39, 41, 50, 0.12);
+}
+
+.anticipation-preview .rsvp-content {
+  min-height: 260px;
+  padding: 24px;
+}
+
+.home-page .anticipation-preview .rsvp-card,
+.home-page .anticipation-preview .rsvp-card:hover,
+.home-page .anticipation-preview .card-link:hover .rsvp-card {
+  transform: none !important;
+}
+
+@media (max-width: 900px) {
+  .anticipation-band {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 58px;
+    padding-bottom: 58px;
+  }
+
+  .anticipation-preview {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 620px) {
+  .anticipation-band {
+    padding-top: 46px;
+    padding-bottom: 46px;
+  }
+
+  .anticipation-copy .section-title {
+    font-size: 2.7rem;
+  }
+
+  .anticipation-chips {
+    margin-top: 24px;
+  }
 }
