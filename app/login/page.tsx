@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { setStoredUser } from "@/lib/auth-client";
 
 export default function LoginPage() {
@@ -19,7 +19,7 @@ export default function LoginPage() {
       const response = await fetch("/api/auth/email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "login", email, password })
+        body: JSON.stringify({ mode: "login", email, password }),
       });
 
       const data = await response.json();
@@ -30,10 +30,10 @@ export default function LoginPage() {
 
       setStoredUser({
         name: data.user?.name || email.split("@")[0] || "e-z.rsvp user",
-        email: data.user?.email || email
+        email: data.user?.email || email,
       });
 
-      window.location.href = data.redirectTo || "/dashboard";
+      window.location.assign(data.redirectTo || "/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to log in.");
     } finally {
@@ -42,52 +42,64 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="main-shell auth-wrap">
-      <section className="auth-card">
-        <p className="page-kicker">Welcome back.</p>
-        <h1 className="section-title">Log in</h1>
-        <p className="section-copy">Use your email and password, or continue with Google.</p>
+    <main className="main-shell">
+      <section className="auth-wrap">
+        <div className="auth-card">
+          <p className="page-kicker compact-kicker">Welcome back.</p>
+          <h1 className="page-title auth-title">Log in</h1>
+          <p className="page-subtitle auth-subtitle">
+            Use your email and password, or continue with Google.
+          </p>
 
-        <form className="auth-form auth-form-spaced" onSubmit={handleSubmit}>
-          <label className="small-label" htmlFor="email">Email</label>
-          <input
-            id="email"
-            className="input"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="you@example.com"
-            required
-          />
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label className="small-label" htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              className="input"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              required
+            />
 
-          <label className="small-label" htmlFor="password">Password</label>
-          <input
-            id="password"
-            className="input"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Enter your password"
-            required
-          />
+            <label className="small-label" htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              className="input"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter your password"
+              required
+            />
 
-          {error && <p className="form-error">{error}</p>}
+            {error && <p className="form-error">{error}</p>}
 
-          <button className="btn btn-primary auth-submit" type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
+            <button className="btn btn-primary auth-submit" type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Log in"}
+            </button>
+          </form>
 
-        <div className="auth-divider"><span>or</span></div>
+          <div className="auth-divider" aria-hidden="true">
+            <span />
+            <small>or</small>
+            <span />
+          </div>
 
-        <a className="auth-provider-button" href="/auth/oauth?provider=google">
-          <span className="auth-provider-icon">G</span>
-          <span>Sign in with Google</span>
-        </a>
+          <a className="auth-provider-button" href="/api/auth/google">
+            <span className="auth-provider-icon">G</span>
+            <span>Sign in with Google</span>
+          </a>
 
-        <p className="auth-switch">
-          New to e-z.rsvp? <Link href="/signup">Create an account</Link>
-        </p>
+          <p className="auth-switch-text">
+            New to e-z.rsvp? <Link href="/signup">Create an account</Link>
+          </p>
+        </div>
       </section>
     </main>
   );

@@ -6,20 +6,17 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearStoredUser, getStoredUser, isLoggedIn } from "@/lib/auth-client";
 
-type NavLink = {
-  href: Route;
-  label: string;
-};
+type NavLink = { href: Route; label: string };
 
 const appLinks: NavLink[] = [
   { href: "/dashboard", label: "My events" },
   { href: "/create-rsvp", label: "Find events" },
-  { href: "/groups", label: "Groups" }
+  { href: "/groups", label: "Groups" },
 ];
 
 const publicLinks: NavLink[] = [
   { href: "/login", label: "Log in" },
-  { href: "/signup", label: "Create account" }
+  { href: "/signup", label: "Create account" },
 ];
 
 function initialsFromName(name?: string) {
@@ -32,12 +29,15 @@ export function Navbar() {
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [initials, setInitials] = useState("EZ");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const syncAuth = () => {
       const user = getStoredUser();
-      setAuthenticated(Boolean(user) || isLoggedIn());
+      const loggedIn = Boolean(user) || isLoggedIn();
+      setAuthenticated(loggedIn);
       setInitials(initialsFromName(user?.name));
+      if (!loggedIn) setMenuOpen(false);
     };
 
     syncAuth();
@@ -48,13 +48,21 @@ export function Navbar() {
       window.removeEventListener("storage", syncAuth);
       window.removeEventListener("ez-auth-change", syncAuth);
     };
-  }, []);
+  }, [pathname]);
 
   async function handleLogout() {
     clearStoredUser();
-    await fetch("/api/auth/logout", { method: "POST" }).catch(() => null);
     setAuthenticated(false);
-    router.push("/");
+    setInitials("EZ");
+    setMenuOpen(false);
+
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      cache: "no-store",
+    }).catch(() => null);
+
+    clearStoredUser();
+    router.replace("/");
     router.refresh();
   }
 
@@ -63,13 +71,20 @@ export function Navbar() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="logo">e-z.rsvp</Link>
+        <Link href="/" className="logo">
+          e-z.rsvp
+        </Link>
 
         <nav className="nav-links" aria-label="Main navigation">
           {links.map((link) => {
             const active = pathname === link.href;
+
             return (
-              <Link key={link.href} className={`nav-link ${active ? "active" : ""}`} href={link.href}>
+              <Link
+                key={link.href}
+                className={`nav-link ${active ? "active" : ""}`}
+                href={link.href}
+              >
                 {link.label}
               </Link>
             );
@@ -78,13 +93,36 @@ export function Navbar() {
 
         {authenticated && (
           <div className="profile-menu-wrap">
-            <button className="icon-button profile-trigger" type="button" aria-label="Open account menu">
+            <button
+              type="button"
+              className="icon-button profile-trigger"
+              aria-label="Account menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((value) => !value)}
+              onMouseEnter={() => setMenuOpen(true)}
+            >
               {initials}
             </button>
-            <div className="profile-menu" role="menu">
-              <Link href="/account" role="menuitem">Settings</Link>
-              <button type="button" role="menuitem" onClick={handleLogout}>Log out</button>
-            </div>
+
+            {menuOpen && (
+              <div
+                className="profile-menu"
+                onMouseEnter={() => setMenuOpen(true)}
+                onMouseLeave={() => setMenuOpen(false)}
+              >
+                <Link className="profile-menu-item" href="/account">
+                  Settings
+                </Link>
+
+                <button
+                  type="button"
+                  className="profile-menu-item"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

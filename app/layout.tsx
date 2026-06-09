@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./ui-fixes.css";
+import "./interaction-fixes.css";
+import "./homepage-fixes.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "e-z.rsvp",
-  description: "Surprise local events revealed two hours before they begin."
+  description: "Surprise local events revealed two hours before they begin.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

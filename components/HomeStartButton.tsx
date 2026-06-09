@@ -1,22 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import type { Route } from "next";
-import { getStoredUser, isLoggedIn } from "@/lib/auth-client";
+import { isLoggedIn } from "@/lib/auth-client";
 
 export function HomeStartButton() {
-  const [href, setHref] = useState<Route>("/signup");
+  const [href, setHref] = useState("/signup");
 
   useEffect(() => {
-    if (getStoredUser() || isLoggedIn()) {
-      setHref("/dashboard");
-    }
+    const syncHref = () => {
+      setHref(isLoggedIn() ? "/dashboard" : "/signup");
+    };
+
+    syncHref();
+    window.addEventListener("storage", syncHref);
+    window.addEventListener("ez-auth-change", syncHref);
+
+    return () => {
+      window.removeEventListener("storage", syncHref);
+      window.removeEventListener("ez-auth-change", syncHref);
+    };
   }, []);
 
   return (
-    <Link className="btn btn-primary" href={href}>
+    <a className="btn btn-primary" href={href}>
       Let&apos;s get started →
-    </Link>
+    </a>
   );
 }
