@@ -1087,3 +1087,99 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   line-height: 1;
   padding: 0;
 }
+
+.sort-field {
+  position: relative;
+  overflow: visible;
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  color: var(--shadow-grey);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  font-weight: 760;
+  text-align: left;
+  box-shadow: 0 10px 24px rgba(39, 41, 50, 0.05);
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.custom-select-trigger:hover {
+  border-color: rgba(39, 41, 50, 0.22);
+  box-shadow: 0 14px 30px rgba(39, 41, 50, 0.08);
+}
+
+.custom-select.open .custom-select-trigger {
+  border-color: var(--wisteria-blue);
+  box-shadow: 0 0 0 5px rgba(140, 160, 215, 0.18);
+}
+
+.custom-select-arrow {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--shadow-grey);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  transform-origin: center;
+  transition: transform .18s ease, background .18s ease;
+}
+
+.custom-select.open .custom-select-arrow {
+  transform: rotate(180deg);
+  background: var(--wash-strong);
+}
+
+.custom-select-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 80;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 20px 48px rgba(39, 41, 50, 0.14);
+  display: grid;
+  gap: 4px;
+}
+
+.custom-select-option {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--shadow-grey);
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 700;
+  transition: background .14s ease, color .14s ease;
+}
+
+.custom-select-option:hover {
+  background: var(--wash);
+}
+
+.custom-select-option.selected {
+  background: var(--shadow-grey);
+  color: #fff;
+}

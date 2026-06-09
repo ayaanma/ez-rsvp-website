@@ -206,6 +206,13 @@ function EventPurchaseOverlay({
   );
 }
 
+const sortOptions = [
+  { value: "soonest", label: "Soonest time" },
+  { value: "latest", label: "Latest time" },
+  { value: "lowest", label: "Lowest price" },
+  { value: "highest", label: "Highest price" },
+] as const;
+
 export default function FindEventsPage() {
   const [address, setAddress] = useState(defaultLocation.label);
   const [selectedLocation, setSelectedLocation] = useState<AddressSuggestion>(defaultLocation);
@@ -224,6 +231,11 @@ export default function FindEventsPage() {
   const [sortBy, setSortBy] = useState<"soonest" | "latest" | "lowest" | "highest">(
     "soonest"
   );
+
+  const [sortOpen, setSortOpen] = useState(false);
+
+  const selectedSortLabel =
+    sortOptions.find((option) => option.value === sortBy)?.label ?? "Soonest time";
 
   const debounceRef = useRef<number | null>(null);
 
@@ -420,23 +432,54 @@ export default function FindEventsPage() {
             />
           </div>
 
-          <div className="form-section">
-            <label className="small-label" htmlFor="sort">
-              Sort by
-            </label>
-            <select
-              id="sort"
-              className="select"
-              value={sortBy}
-              onChange={(event) =>
-                setSortBy(event.target.value as typeof sortBy)
-              }
+          <div className="form-section sort-field">
+            <label className="small-label">Sort by</label>
+
+            <div
+              className={`custom-select ${sortOpen ? "open" : ""}`}
+              tabIndex={0}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  setSortOpen(false);
+                }
+              }}
             >
-              <option value="soonest">Soonest time</option>
-              <option value="latest">Latest time</option>
-              <option value="lowest">Lowest price</option>
-              <option value="highest">Highest price</option>
-            </select>
+              <button
+                type="button"
+                className="custom-select-trigger"
+                aria-haspopup="listbox"
+                aria-expanded={sortOpen}
+                onClick={() => setSortOpen((current) => !current)}
+              >
+                <span>{selectedSortLabel}</span>
+                <span className="custom-select-arrow" aria-hidden="true">
+                  ▾
+                </span>
+              </button>
+
+              {sortOpen && (
+                <div className="custom-select-menu" role="listbox">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={`custom-select-option ${
+                        sortBy === option.value ? "selected" : ""
+                      }`}
+                      role="option"
+                      aria-selected={sortBy === option.value}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => {
+                        setSortBy(option.value);
+                        setSortOpen(false);
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="form-section compact-toggle">
