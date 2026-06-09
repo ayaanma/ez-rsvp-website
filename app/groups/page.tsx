@@ -138,7 +138,7 @@ export default function GroupsPage() {
   return (
     <main className="main-shell">
       <div className="section-head" style={{ textAlign: "left", marginLeft: 0 }}>
-        <h1 className="page-title">Your Groups</h1>
+        <h1 className="page-title">Your groups.</h1>
         <p className="page-subtitle">Coordinate mystery plans with friends using share codes.</p>
         {message && <p className="section-copy" style={{ marginTop: 12 }}>{message}</p>}
         <div className="hero-actions">

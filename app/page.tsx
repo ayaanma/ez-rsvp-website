@@ -97,7 +97,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section safety-section">
         <div className="section-head">
           <h2 className="section-title">Safety &amp; Trust</h2>
         </div>

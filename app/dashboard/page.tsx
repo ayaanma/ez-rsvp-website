@@ -223,7 +223,7 @@ export default function DashboardPage() {
   return (
     <main className="main-shell">
       <p className="page-kicker">Your upcoming thrills await.</p>
-      <h1 className="page-title">Welcome Back.</h1>
+      <h1 className="page-title">Welcome back.</h1>
 
       <section className="dashboard-grid">
         <div>
