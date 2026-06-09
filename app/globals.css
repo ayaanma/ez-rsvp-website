@@ -855,6 +855,7 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
 .icon-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 .icon-button img {
@@ -1075,4 +1076,14 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.profile-trigger.icon-button,
+.profile-menu-wrap > .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  padding: 0;
 }

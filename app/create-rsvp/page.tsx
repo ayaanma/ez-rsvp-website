@@ -28,7 +28,7 @@ const hiddenPhraseByEventId: Record<string, string> = {
   "evt-2": "Let's have some fun.",
   "evt-3": "Your calling.",
   "evt-4": "This is the one.",
-  "evt-5": "Your next adventure.",
+  "evt-5": "This is the one.",
 };
 
 const defaultLocation: AddressSuggestion = {
@@ -37,12 +37,32 @@ const defaultLocation: AddressSuggestion = {
   lon: -73.9855,
 };
 
-const eventCoordinates: Record<string, Coordinates> = {
-  "evt-1": { lat: 40.7283, lon: -73.9942 },
-  "evt-2": { lat: 40.7647, lon: -73.9827 },
-  "evt-3": { lat: 40.7194, lon: -74.0031 },
-  "evt-4": { lat: 40.7301, lon: -74.0007 },
-  "evt-5": { lat: 40.742, lon: -74.0105 },
+const internalEventLocations: Record<string, Coordinates & { address: string }> = {
+  "evt-1": {
+    address: "226 West 54th Street, New York, NY 10019",
+    lat: 40.7647,
+    lon: -73.9827,
+  },
+  "evt-2": {
+    address: "90 Wythe Avenue, Brooklyn, NY 11249",
+    lat: 40.7219,
+    lon: -73.9575,
+  },
+  "evt-3": {
+    address: "23-10 Queens Plaza South, Long Island City, NY 11101",
+    lat: 40.7505,
+    lon: -73.9397,
+  },
+  "evt-4": {
+    address: "550 Broad Street, Newark, NJ 07102",
+    lat: 40.7435,
+    lon: -74.1692,
+  },
+  "evt-5": {
+    address: "49 Mamaroneck Avenue, White Plains, NY 10601",
+    lat: 41.0318,
+    lon: -73.7634,
+  },
 };
 
 function distanceInMiles(from: Coordinates, to: Coordinates) {
@@ -255,9 +275,9 @@ export default function FindEventsPage() {
 
   const filtered = useMemo(() => {
     const filteredEvents = events.filter((event) => {
-      const coordinates = eventCoordinates[event.id];
-      const withinRadius = coordinates
-        ? distanceInMiles(selectedLocation, coordinates) <= radius
+      const eventLocation = internalEventLocations[event.id];
+      const withinRadius = eventLocation
+        ? distanceInMiles(selectedLocation, eventLocation) <= radius
         : true;
 
       return (
