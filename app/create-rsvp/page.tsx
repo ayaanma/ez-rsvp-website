@@ -1,18 +1,65 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { categories, events } from "@/lib/mock-data";
 import { RSVPCard } from "@/components/RSVPCard";
 import { purchaseTickets } from "@/lib/browser-actions";
 import type { EventItem } from "@/types";
 
-const cardColors: EventItem["color"][] = ["apricot", "baby", "wisteria", "amethyst"];
-const hiddenPhrases = [
-  "Your next adventure.",
-  "Let's have some fun.",
-  "Your calling.",
-  "This is the one.",
-];
+type Coordinates = {
+  lat: number;
+  lon: number;
+};
+
+type AddressSuggestion = Coordinates & {
+  label: string;
+};
+
+const cardColorsByEventId: Record<string, EventItem["color"]> = {
+  "evt-1": "apricot",
+  "evt-2": "baby",
+  "evt-3": "wisteria",
+  "evt-4": "amethyst",
+  "evt-5": "apricot",
+};
+
+const hiddenPhraseByEventId: Record<string, string> = {
+  "evt-1": "Your next adventure.",
+  "evt-2": "Let's have some fun.",
+  "evt-3": "Your calling.",
+  "evt-4": "This is the one.",
+  "evt-5": "Your next adventure.",
+};
+
+const defaultLocation: AddressSuggestion = {
+  label: "Times Square, New York, NY",
+  lat: 40.758,
+  lon: -73.9855,
+};
+
+const eventCoordinates: Record<string, Coordinates> = {
+  "evt-1": { lat: 40.7283, lon: -73.9942 },
+  "evt-2": { lat: 40.7647, lon: -73.9827 },
+  "evt-3": { lat: 40.7194, lon: -74.0031 },
+  "evt-4": { lat: 40.7301, lon: -74.0007 },
+  "evt-5": { lat: 40.742, lon: -74.0105 },
+};
+
+function distanceInMiles(from: Coordinates, to: Coordinates) {
+  const earthRadiusMiles = 3958.8;
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+
+  const dLat = toRadians(to.lat - from.lat);
+  const dLon = toRadians(to.lon - from.lon);
+  const lat1 = toRadians(from.lat);
+  const lat2 = toRadians(to.lat);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+
+  return earthRadiusMiles * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 function DetailIcon({ src, alt, fallback }: { src?: string; alt: string; fallback: string }) {
   return src ? (
@@ -140,7 +187,12 @@ function EventPurchaseOverlay({
 }
 
 export default function FindEventsPage() {
-  const [address, setAddress] = useState("New York, NY");
+  const [address, setAddress] = useState(defaultLocation.label);
+  const [selectedLocation, setSelectedLocation] = useState<AddressSuggestion>(defaultLocation);
+  const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+  const [addressFocused, setAddressFocused] = useState(false);
+  const [addressLoading, setAddressLoading] = useState(false);
+  const [addressError, setAddressError] = useState("");
   const [radius, setRadius] = useState(10);
   const [maxPrice, setMaxPrice] = useState(75);
   const [mysteryMode, setMysteryMode] = useState(true);
@@ -152,28 +204,72 @@ export default function FindEventsPage() {
   const [sortBy, setSortBy] = useState<"soonest" | "latest" | "lowest" | "highest">(
     "soonest"
   );
-  const [sortOpen, setSortOpen] = useState(false);
 
-  const sortOptions: { value: typeof sortBy; label: string }[] = [
-    { value: "soonest", label: "Soonest time first" },
-    { value: "latest", label: "Latest time first" },
-    { value: "lowest", label: "Lowest price first" },
-    { value: "highest", label: "Highest price first" },
-  ];
+  const debounceRef = useRef<number | null>(null);
 
-  const activeSortLabel =
-    sortOptions.find((option) => option.value === sortBy)?.label ?? "Soonest time";
+  useEffect(() => {
+    const query = address.trim();
+
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+    }
+
+    if (query.length < 3 || query === selectedLocation.label) {
+      setAddressSuggestions([]);
+      setAddressLoading(false);
+      setAddressError("");
+      return;
+    }
+
+    setAddressLoading(true);
+    setAddressError("");
+
+    debounceRef.current = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
+        const data = (await response.json().catch(() => ({}))) as {
+          suggestions?: AddressSuggestion[];
+          error?: string;
+        };
+
+        if (!response.ok) {
+          throw new Error(data.error || "Address search failed.");
+        }
+
+        setAddressSuggestions(data.suggestions ?? []);
+        setAddressError("");
+      } catch {
+        setAddressSuggestions([]);
+        setAddressError("Address search is temporarily unavailable.");
+      } finally {
+        setAddressLoading(false);
+      }
+    }, 260);
+
+    return () => {
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+    };
+  }, [address, selectedLocation.label]);
 
   const filtered = useMemo(() => {
-    const filteredEvents = events.filter(
-      (event) =>
+    const filteredEvents = events.filter((event) => {
+      const coordinates = eventCoordinates[event.id];
+      const withinRadius = coordinates
+        ? distanceInMiles(selectedLocation, coordinates) <= radius
+        : true;
+
+      return (
         event.price <= maxPrice &&
+        withinRadius &&
         (mysteryMode ||
           selected.length === 0 ||
           selected.some(
             (cat) => cat.toLowerCase() === event.category.toLowerCase()
           ))
-    );
+      );
+    });
 
     filteredEvents.sort((a, b) => {
       if (sortBy === "latest") {
@@ -187,7 +283,15 @@ export default function FindEventsPage() {
     });
 
     return filteredEvents.slice(0, 4);
-  }, [maxPrice, selected, mysteryMode, sortBy]);
+  }, [maxPrice, selected, mysteryMode, sortBy, radius, selectedLocation]);
+
+  function chooseAddress(suggestion: AddressSuggestion) {
+    setAddress(suggestion.label);
+    setSelectedLocation(suggestion);
+    setAddressSuggestions([]);
+    setAddressFocused(false);
+    setAddressError("");
+  }
 
   function toggle(cat: string) {
     if (mysteryMode) return;
@@ -203,7 +307,7 @@ export default function FindEventsPage() {
         <aside className="filters-panel">
           <h2>Filters</h2>
 
-          <div className="form-section">
+          <div className="form-section address-field">
             <label className="small-label" htmlFor="address">
               Location
             </label>
@@ -211,9 +315,53 @@ export default function FindEventsPage() {
               id="address"
               className="input"
               value={address}
-              onChange={(event) => setAddress(event.target.value)}
-              placeholder="Type an address"
+              onBlur={() => window.setTimeout(() => setAddressFocused(false), 150)}
+              onChange={(event) => {
+                setAddress(event.target.value);
+                setAddressFocused(true);
+              }}
+              onFocus={() => setAddressFocused(true)}
+              placeholder="Type any U.S. address"
             />
+
+            {addressFocused &&
+              (addressSuggestions.length > 0 || addressLoading || addressError) && (
+                <div className="address-suggestions" role="listbox">
+                  {addressLoading && (
+                    <div className="address-suggestion-muted">Searching addresses...</div>
+                  )}
+
+                  {!addressLoading &&
+                    addressSuggestions.map((suggestion) => (
+                      <button
+                        key={`${suggestion.label}-${suggestion.lat}-${suggestion.lon}`}
+                        className="address-suggestion"
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => chooseAddress(suggestion)}
+                      >
+                        {suggestion.label}
+                      </button>
+                    ))}
+
+                  {!addressLoading && addressError && (
+                    <div className="address-suggestion-muted">{addressError}</div>
+                  )}
+
+                  {!addressLoading &&
+                    !addressError &&
+                    address.trim().length >= 3 &&
+                    addressSuggestions.length === 0 && (
+                      <div className="address-suggestion-muted">
+                        No matching U.S. addresses found.
+                      </div>
+                    )}
+                </div>
+              )}
+
+            <p className="filter-hint">
+              Showing events within {radius} miles of {selectedLocation.label}.
+            </p>
           </div>
 
           <div className="form-section">
@@ -252,52 +400,23 @@ export default function FindEventsPage() {
             />
           </div>
 
-          <div className="form-section sort-field">
-            <span className="small-label" id="sort-label">
+          <div className="form-section">
+            <label className="small-label" htmlFor="sort">
               Sort by
-            </span>
-
-            <div className={`custom-select ${sortOpen ? "open" : ""}`}>
-              <button
-                className="custom-select-trigger"
-                type="button"
-                aria-haspopup="listbox"
-                aria-expanded={sortOpen}
-                aria-labelledby="sort-label"
-                onClick={() => setSortOpen((open) => !open)}
-              >
-                <span>{activeSortLabel}</span>
-                <span className="custom-select-arrow" aria-hidden="true">
-                  ▾
-                </span>
-              </button>
-
-              {sortOpen && (
-                <div
-                  className="custom-select-menu"
-                  role="listbox"
-                  aria-labelledby="sort-label"
-                >
-                  {sortOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      className={`custom-select-option ${
-                        sortBy === option.value ? "selected" : ""
-                      }`}
-                      type="button"
-                      role="option"
-                      aria-selected={sortBy === option.value}
-                      onClick={() => {
-                        setSortBy(option.value);
-                        setSortOpen(false);
-                      }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            </label>
+            <select
+              id="sort"
+              className="select"
+              value={sortBy}
+              onChange={(event) =>
+                setSortBy(event.target.value as typeof sortBy)
+              }
+            >
+              <option value="soonest">Soonest time</option>
+              <option value="latest">Latest time</option>
+              <option value="lowest">Lowest price</option>
+              <option value="highest">Highest price</option>
+            </select>
           </div>
 
           <div className="form-section compact-toggle">
@@ -345,15 +464,15 @@ export default function FindEventsPage() {
           </p>
 
           <div className="events-grid" style={{ marginTop: 32 }}>
-            {filtered.map((event, index) => {
+            {filtered.map((event) => {
               const displayEvent = {
                 ...event,
-                color: cardColors[index],
+                color: cardColorsByEventId[event.id] ?? event.color,
                 imageUrl: undefined,
                 imageBlurred: false,
               };
 
-              const hiddenTitle = hiddenPhrases[index];
+              const hiddenTitle = hiddenPhraseByEventId[event.id] ?? "Your next adventure.";
 
               return (
                 <button
@@ -374,6 +493,16 @@ export default function FindEventsPage() {
               );
             })}
           </div>
+
+          {filtered.length === 0 && (
+            <div className="empty-state-card">
+              <h2>No mystery plans found.</h2>
+              <p>
+                Try expanding your radius, raising your max price, or choosing a
+                nearby address from the location suggestions.
+              </p>
+            </div>
+          )}
         </section>
       </div>
 

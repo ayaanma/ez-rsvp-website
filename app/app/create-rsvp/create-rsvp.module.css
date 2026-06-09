@@ -1,0 +1,59 @@
+.addressField {
+  position: relative;
+}
+
+.addressSuggestions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 70;
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 20px 48px rgba(39, 41, 50, 0.14);
+}
+
+.addressSuggestion {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--shadow-grey);
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 720;
+  line-height: 1.25;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+
+.addressSuggestion:hover,
+.addressSuggestion:focus-visible {
+  background: var(--wash);
+  outline: none;
+}
+
+.addressSuggestionSelected {
+  background: var(--shadow-grey);
+  color: #fff;
+}
+
+.locationHint {
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.emptyState {
+  margin-top: 24px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: #fff;
+  color: var(--muted);
+  box-shadow: var(--shadow-soft);
+}
