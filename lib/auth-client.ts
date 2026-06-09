@@ -2,6 +2,7 @@ export type StoredUser = {
   name: string;
   email: string;
   phone?: string;
+  avatarUrl?: string;
 };
 
 const AUTH_KEY = "ez_auth_user";
@@ -23,25 +24,45 @@ function readCookie(name: string) {
     .find((item) => item.startsWith(`${name}=`));
 
   if (!match) return null;
+
   return safeDecode(match.slice(name.length + 1));
 }
 
-function expireCookie(name: string) {
+function readCookieProfile() {
+  const cookieProfile = readCookie("ez_user_profile");
+
+  if (!cookieProfile) return null;
+
+  try {
+    return JSON.parse(cookieProfile) as StoredUser;
+  } catch {
+    return null;
+  }
+}
+
+function writeCookie(name: string, value: string, maxAgeSeconds: number) {
   if (typeof document === "undefined") return;
 
-  const options = [
-    `${name}=; Max-Age=0; path=/`,
-    `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`,
-    `${name}=; Max-Age=0; path=/; SameSite=Lax`,
-  ];
+  document.cookie = `${name}=${encodeURIComponent(
+    value
+  )}; path=/; max-age=${maxAgeSeconds}; samesite=lax`;
+}
 
-  options.forEach((cookie) => {
-    document.cookie = cookie;
-  });
+function deleteCookie(name: string) {
+  if (typeof document === "undefined") return;
+
+  document.cookie = `${name}=; path=/; max-age=0; samesite=lax`;
 }
 
 export function getStoredUser(): StoredUser | null {
   if (typeof window === "undefined") return null;
+
+  const cookieProfile = readCookieProfile();
+
+  if (cookieProfile?.email || cookieProfile?.name) {
+    window.localStorage.setItem(AUTH_KEY, JSON.stringify(cookieProfile));
+    return cookieProfile;
+  }
 
   const stored = window.localStorage.getItem(AUTH_KEY);
 
@@ -53,16 +74,10 @@ export function getStoredUser(): StoredUser | null {
     }
   }
 
-  const cookieProfile = readCookie("ez_user_profile");
-
-  if (cookieProfile) {
-    try {
-      const profile = JSON.parse(cookieProfile) as StoredUser;
-      window.localStorage.setItem(AUTH_KEY, JSON.stringify(profile));
-      return profile;
-    } catch {
-      return null;
-    }
+  if (readCookie("ez_auth") === "1") {
+    const fallback = { name: "e-z.rsvp user", email: "" };
+    window.localStorage.setItem(AUTH_KEY, JSON.stringify(fallback));
+    return fallback;
   }
 
   return null;
@@ -70,23 +85,18 @@ export function getStoredUser(): StoredUser | null {
 
 export function isLoggedIn() {
   if (typeof window === "undefined") return false;
-  return Boolean(getStoredUser() || readCookie("ez_auth") === "1");
+
+  return Boolean(getStoredUser());
 }
 
 export function setStoredUser(user: StoredUser) {
   if (typeof window === "undefined") return;
 
-  const normalizedUser = {
-    name: user.name || user.email?.split("@")[0] || "e-z.rsvp user",
-    email: user.email || "",
-    phone: user.phone || "",
-  };
+  window.localStorage.setItem(AUTH_KEY, JSON.stringify(user));
 
-  window.localStorage.setItem(AUTH_KEY, JSON.stringify(normalizedUser));
-  document.cookie = `ez_auth=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
-  document.cookie = `ez_user_profile=${encodeURIComponent(
-    JSON.stringify(normalizedUser)
-  )}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+  writeCookie("ez_auth", "1", 60 * 60 * 24 * 30);
+  writeCookie("ez_user_profile", JSON.stringify(user), 60 * 60 * 24 * 30);
+
   window.dispatchEvent(new Event("ez-auth-change"));
 }
 
@@ -94,18 +104,11 @@ export function clearStoredUser() {
   if (typeof window === "undefined") return;
 
   window.localStorage.removeItem(AUTH_KEY);
-  window.localStorage.removeItem("ez_auth");
-  window.localStorage.removeItem("ez_demo_user");
 
-  [
-    "ez_auth",
-    "ez_user_profile",
-    "ez_demo_user",
-    "ez_supabase_access_token",
-    "ez_supabase_refresh_token",
-    "sb-access-token",
-    "sb-refresh-token",
-  ].forEach(expireCookie);
+  deleteCookie("ez_auth");
+  deleteCookie("ez_user_profile");
+  deleteCookie("ez_supabase_access_token");
+  deleteCookie("ez_supabase_refresh_token");
 
   window.dispatchEvent(new Event("ez-auth-change"));
 }
