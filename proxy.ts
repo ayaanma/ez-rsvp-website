@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes = ["/dashboard", "/account", "/groups", "/create-rsvp"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
   const protectedRoute = protectedRoutes.some(
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  if (!protectedRoute) return NextResponse.next();
+  if (!protectedRoute) {
+    return NextResponse.next();
+  }
 
   const isAuthed = request.cookies.get("ez_auth")?.value === "1";
 
@@ -23,5 +26,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/account/:path*", "/groups/:path*", "/create-rsvp/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/account/:path*",
+    "/groups/:path*",
+    "/create-rsvp/:path*",
+  ],
 };
