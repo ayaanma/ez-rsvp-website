@@ -412,7 +412,7 @@ export default function FindEventsPage() {
           <div className={styles.filterGroup}>
             <p className="small-label">Categories</p>
             <div className={styles.categoryGrid}>
-              {categories.slice(0, 7).map((cat) => (
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   type="button"

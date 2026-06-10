@@ -18,7 +18,7 @@ type AccountSettings = {
 };
 
 const SETTINGS_KEY = "ez_account_settings";
-const defaultFavoriteCategories = ["Nightlife", "Dining"];
+const defaultFavoriteCategories = ["food", "music"];
 
 const notificationSettings = [
   { id: "revealReminders", title: "Reveal reminders", description: "Get a reminder before an RSVP unlocks." },
@@ -51,7 +51,10 @@ function readSettings(): AccountSettings {
     return {
       notifications: { ...defaultSettings.notifications, ...(parsed.notifications ?? {}) },
       safety: { ...defaultSettings.safety, ...(parsed.safety ?? {}) },
-      favoriteCategories: parsed.favoriteCategories?.length ? parsed.favoriteCategories : defaultFavoriteCategories,
+      favoriteCategories: (() => {
+        const savedCategories = parsed.favoriteCategories?.filter((category) => categories.includes(category)) ?? [];
+        return savedCategories.length ? savedCategories : defaultFavoriteCategories;
+      })(),
     };
   } catch {
     return defaultSettings;
@@ -169,7 +172,7 @@ export default function AccountPage() {
     };
   }, [profile.defaultAddress]);
 
-  const visibleCategories = useMemo(() => categories.slice(0, 8), []);
+  const visibleCategories = useMemo(() => categories, []);
 
   function persistProfile(nextProfile: StoredUser) {
     setProfile(nextProfile);
