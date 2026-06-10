@@ -54,7 +54,7 @@ const eventClues: Record<string, EventClueSet> = {
     ]
   },
   "evt-5": {
-    revealCount: 1,
+    revealCount: 2,
     clues: [
       "The vibe is calm, social, and low pressure.",
       "The best part happens close to golden hour.",
