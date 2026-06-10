@@ -52,7 +52,7 @@ function readSettings(): AccountSettings {
       notifications: { ...defaultSettings.notifications, ...(parsed.notifications ?? {}) },
       safety: { ...defaultSettings.safety, ...(parsed.safety ?? {}) },
       favoriteCategories: (() => {
-        const savedCategories = parsed.favoriteCategories?.filter((category) => categories.includes(category)) ?? [];
+        const savedCategories = parsed.favoriteCategories?.filter((category) => categories.includes(category as (typeof categories)[number])) ?? [];
         return savedCategories.length ? savedCategories : defaultFavoriteCategories;
       })(),
     };

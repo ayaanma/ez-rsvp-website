@@ -10,17 +10,7 @@ export const members = [
   { id: "m4", name: "Eli Park", initials: "EP" },
 ];
 
-export const categories = [
-  "food",
-  "music",
-  "sport",
-  "arts",
-  "comedy",
-  "outdoor activities",
-  "gaming",
-  "nightlife",
-  "networking",
-];
+export { categories } from "./categories";
 
 export const events: EventItem[] = [
   {
