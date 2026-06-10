@@ -773,7 +773,7 @@ export default function SocialPage() {
       <p className="page-kicker">Plan with people.</p>
       <h1 className="page-title">Social</h1>
       <p className="page-subtitle">
-        Keep up with friends, local ticket signals, and your mystery RSVP
+        Keep up with friends, local ticket drops, and your mystery RSVP
         groups.
       </p>
 
@@ -818,7 +818,7 @@ export default function SocialPage() {
             <div>
               <h2>Happening now</h2>
               <p>
-                See events popular with your friends and the local community
+                See events popular with your friends and the local community.
               </p>
             </div>
           </div>

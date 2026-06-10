@@ -4,9 +4,11 @@ import { useState } from "react";
 import { categories } from "@/lib/mock-data";
 import styles from "./organizers.module.css";
 
+type OrganizerCategory = (typeof categories)[number];
+
 export default function OrganizersPage() {
   const [categoryOpen, setCategoryOpen] = useState(false);
-  const [category, setCategory] = useState(categories[0] ?? "food");
+  const [category, setCategory] = useState<OrganizerCategory>(categories[0] ?? "food");
 
   return (
     <main className="main-shell">

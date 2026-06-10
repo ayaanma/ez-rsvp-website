@@ -16,7 +16,7 @@ export default function HomePage() {
             RSVP now. Find out where <span className="later-blue">later.</span>
           </h1>
           <p>
-            It&apos;s time to make going out easy. It&apos;s our job to plan the events. All you have to do is show up.
+            It&apos;s time to make going out easy. It&apos;s our job to find the events. All you have to do is show up.
           </p>
           <div className="hero-actions">
             <HomeStartButton />
@@ -45,7 +45,7 @@ export default function HomePage() {
             make it e-z.
           </h2>
           <p className="section-copy">
-            e-z.rsvp makes going out a much more stress-free, streamlined experience. Choose your timing, budget, and relative location, and we&apos;ll handle venues, activities, and everything in between. You can get all the fun of spontaneity without the stress of planning every detail.
+            Everyone gets planning fatigue. e-z.rsvp helps with that by making going out a much more stress-free, streamlined experience. Choose your timing, budget, and relative location, and we&apos;ll handle venues, activities, and everything in between. We won't tell you where you're going until 2 hours before the event, that way you can get all the fun of spontaneity without the stress of planning.
           </p>
         </div>
       </section>
