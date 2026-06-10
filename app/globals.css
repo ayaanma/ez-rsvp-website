@@ -1428,3 +1428,8 @@ label.small-label { font-size:.82rem; color: var(--muted); font-weight:760; text
     margin-top: 24px;
   }
 }
+
+.brand {
+  font-weight: 1000;
+  font-size: 28;
+}
