@@ -1,9 +1,9 @@
 import styles from "./download.module.css";
 
 const screenshots = [
-  { src: "/app-images/img1.png", alt: "e-z.rsvp app mystery event discovery screen" },
-  { src: "/app-images/img2.png", alt: "e-z.rsvp app event reveal screen" },
-  { src: "/app-images/img3.png", alt: "e-z.rsvp app social plans screen" },
+  { src: "/app-images/img1.PNG", alt: "e-z.rsvp app mystery event discovery screen" },
+  { src: "/app-images/img2.PNG", alt: "e-z.rsvp app event reveal screen" },
+  { src: "/app-images/img3.PNG", alt: "e-z.rsvp app social plans screen" },
 ];
 
 const infoRows = [
