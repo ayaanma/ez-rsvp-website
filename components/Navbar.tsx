@@ -11,7 +11,7 @@ type NavLink = { href: Route; label: string };
 const appLinks: NavLink[] = [
   { href: "/dashboard", label: "My events" },
   { href: "/create-rsvp", label: "Find events" },
-  { href: "/groups", label: "Groups" },
+  { href: "/social", label: "Social" },
 ];
 
 const publicLinks: NavLink[] = [
@@ -43,7 +43,6 @@ export function Navbar() {
     syncAuth();
     window.addEventListener("storage", syncAuth);
     window.addEventListener("ez-auth-change", syncAuth);
-
     return () => {
       window.removeEventListener("storage", syncAuth);
       window.removeEventListener("ez-auth-change", syncAuth);
@@ -55,12 +54,7 @@ export function Navbar() {
     setAuthenticated(false);
     setInitials("EZ");
     setMenuOpen(false);
-
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      cache: "no-store",
-    }).catch(() => null);
-
+    await fetch("/api/auth/logout", { method: "POST", cache: "no-store" }).catch(() => null);
     clearStoredUser();
     router.replace("/");
     router.refresh();
@@ -71,60 +65,46 @@ export function Navbar() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link href="/" className="logo">
+        <Link className="logo" href="/" aria-label="e-z.rsvp home">
           e-z.rsvp
         </Link>
-
-        <nav className="nav-links" aria-label="Main navigation">
+        <nav className="nav-links" aria-label="Primary navigation">
           {links.map((link) => {
-            const active = pathname === link.href;
-
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
             return (
-              <Link
-                key={link.href}
-                className={`nav-link ${active ? "active" : ""}`}
-                href={link.href}
-              >
+              <Link key={link.href} className={`nav-link ${active ? "active" : ""}`} href={link.href}>
                 {link.label}
               </Link>
             );
           })}
         </nav>
-
-        {authenticated && (
-          <div className="profile-menu-wrap">
-            <button
-              type="button"
-              className="icon-button profile-trigger"
-              aria-label="Account menu"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((value) => !value)}
+        <div className="header-actions">
+          {authenticated && (
+            <div
+              className="profile-menu-wrap"
               onMouseEnter={() => setMenuOpen(true)}
+              onMouseLeave={() => setMenuOpen(false)}
             >
-              {initials}
-            </button>
-
-            {menuOpen && (
-              <div
-                className="profile-menu"
-                onMouseEnter={() => setMenuOpen(true)}
-                onMouseLeave={() => setMenuOpen(false)}
+              <button
+                className="icon-button profile-trigger"
+                onClick={() => setMenuOpen((value) => !value)}
+                aria-label="Open account menu"
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
               >
-                <Link className="profile-menu-item" href="/account">
-                  Settings
-                </Link>
-
-                <button
-                  type="button"
-                  className="profile-menu-item"
-                  onClick={handleLogout}
-                >
-                  Log out
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+                <span className="avatar-initials">{initials}</span>
+              </button>
+              {menuOpen && (
+                <div className="profile-menu">
+                  <Link href="/account">Settings</Link>
+                  <button type="button" onClick={handleLogout}>
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

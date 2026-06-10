@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./ui-repair.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ProfileOverlayRoot } from "@/components/ProfileOverlayRoot";
 
 export const metadata: Metadata = {
   title: "e-z.rsvp",
@@ -10,10 +12,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en">
       <body>
         <div className="page-shell">
           <Navbar />
+          <ProfileOverlayRoot />
           {children}
           <Footer />
         </div>

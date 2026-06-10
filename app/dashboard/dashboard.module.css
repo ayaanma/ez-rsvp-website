@@ -1,154 +1,33 @@
-.dashboardPage {
-  --dashboard-sidebar-offset: 64px;
-}
-
-.dashboardKicker {
-  margin-bottom: 0 !important;
-}
-
-.dashboardTitle {
-  margin-top: 0 !important;
-  margin-bottom: 4px !important;
-}
-
-.upcomingSection {
-  padding-top: 0 !important;
-}
-
-.upcomingSection :global(.upcoming-heading) {
-  margin-top: 0 !important;
-  margin-bottom: 16px !important;
-}
-
-.dashboardSidebar {
-  padding-top: var(--dashboard-sidebar-offset);
-}
-
-.ticketActions {
-  margin-top: 22px !important;
-  gap: 14px !important;
-}
-
-.pastShareActions {
-  margin-top: 22px !important;
-}
-
-.reviewHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 10px;
-}
-
-.reviewHeader h2 {
-  margin: 0;
-}
-
-.editReviewButton {
-  width: 38px;
-  height: 38px;
-  min-width: 38px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  cursor: pointer;
-  box-shadow: 0 10px 22px rgba(39, 41, 50, .08);
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-}
-
-.editReviewButton:hover {
-  transform: translateY(-1px);
-  border-color: rgba(39, 41, 50, .22);
-  box-shadow: 0 14px 30px rgba(39, 41, 50, .12);
-}
-
-.editReviewButton img {
-  width: 16px;
-  height: 16px;
-  display: block;
-}
-
-.reviewEditForm {
-  display: grid;
-  gap: 14px;
-}
-
-.reviewTextarea {
-  width: 100%;
-  min-height: 130px;
-  resize: vertical;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: #fff;
-  color: var(--shadow-grey);
-  padding: 14px 16px;
-  font: inherit;
-  font-weight: 650;
-  line-height: 1.5;
-  outline: none;
-}
-
-.reviewTextarea:focus {
-  border-color: var(--wisteria-blue);
-  box-shadow: 0 0 0 5px rgba(140, 160, 215, .18);
-}
-
-.reviewEditActions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.dashboardPage :global(.modal-card > .page-kicker) {
-  margin-bottom: 8px;
-}
-
-.dashboardPage :global(.modal-title) {
-  margin-top: 0;
-  margin-bottom: 8px;
-}
-
-.dashboardPage :global(.modal-card > .page-subtitle) {
-  margin-top: 0;
-  margin-bottom: 22px;
-}
-
-.dashboardPage :global(.rsvp-title) {
-  margin-top: 6px;
-  margin-bottom: 2px;
-}
-
-.dashboardPage :global(.rsvp-meta) {
-  margin-top: 0;
-}
-
-@media (max-width: 900px) {
-  .dashboardSidebar {
-    padding-top: 0;
-  }
-
-  .reviewEditActions {
-    grid-template-columns: 1fr;
-  }
-}
-
-.ticketActions {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-  gap: 14px !important;
-  column-gap: 14px !important;
-  row-gap: 14px !important;
-}
-
-.ticketActions > * {
-  min-width: 0;
-}
-
-.ticketActions > :global(.btn) {
-  width: 100%;
-}
+.dashboardPage { --dashboard-sidebar-offset: 64px; }
+.dashboardKicker { margin-bottom: 0 !important; }
+.dashboardTitle { margin-top: 0 !important; margin-bottom: 4px !important; }
+.upcomingSection { padding-top: 0 !important; }
+.upcomingSection :global(.upcoming-heading) { margin-top: 0 !important; margin-bottom: 16px !important; }
+.dashboardSidebar { padding-top: var(--dashboard-sidebar-offset); }
+.ticketActions { margin-top: 22px !important; gap: 14px !important; }
+.pastShareActions { margin-top: 22px !important; }
+.reviewHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+.reviewHeader h2 { margin: 0; }
+.editReviewButton { width: 38px; height: 38px; min-width: 38px; border: 1px solid var(--line); border-radius: 999px; background: #fff; display: inline-flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; box-shadow: 0 10px 22px rgba(39, 41, 50, .08); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.editReviewButton:hover { transform: translateY(-1px); border-color: rgba(39, 41, 50, .22); box-shadow: 0 14px 30px rgba(39, 41, 50, .12); }
+.editReviewButton img { width: 16px; height: 16px; display: block; }
+.reviewEditForm { display: grid; gap: 14px; }
+.reviewTextarea { width: 100%; min-height: 130px; resize: vertical; border: 1px solid var(--line); border-radius: 18px; background: #fff; color: var(--shadow-grey); padding: 14px 16px; font: inherit; font-weight: 650; line-height: 1.5; outline: none; }
+.reviewTextarea:focus { border-color: var(--wisteria-blue); box-shadow: 0 0 0 5px rgba(140, 160, 215, .18); }
+.reviewEditActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dashboardPage :global(.modal-card > .page-kicker) { margin-bottom: 8px; }
+.dashboardPage :global(.modal-title) { margin-top: 0; margin-bottom: 8px; }
+.dashboardPage :global(.modal-card > .page-subtitle) { margin-top: 0; margin-bottom: 22px; }
+.dashboardPage :global(.rsvp-title) { margin-top: 6px; margin-bottom: 2px; }
+.dashboardPage :global(.rsvp-meta) { margin-top: 0; }
+.ticketActions { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 14px !important; column-gap: 14px !important; row-gap: 14px !important; }
+.ticketActions > * { min-width: 0; }
+.ticketActions > :global(.btn) { width: 100%; }
+.dashboardPage :global(.modal-backdrop) { overflow: hidden; padding: 24px; }
+.dashboardPage :global(.modal-card) { box-sizing: border-box; max-height: calc(100vh - 48px); overflow-y: auto; overflow-x: hidden; scrollbar-gutter: stable; overscroll-behavior: contain; padding-right: clamp(22px, 3vw, 38px); }
+.dashboardPage :global(.modal-card::-webkit-scrollbar) { width: 10px; }
+.dashboardPage :global(.modal-card::-webkit-scrollbar-track) { background: transparent; margin: 24px 0; }
+.dashboardPage :global(.modal-card::-webkit-scrollbar-thumb) { background: rgba(39, 41, 50, .18); border: 3px solid transparent; border-radius: 999px; background-clip: padding-box; }
+.dashboardPage :global(.modal-card::-webkit-scrollbar-thumb:hover) { background: rgba(39, 41, 50, .28); border: 3px solid transparent; background-clip: padding-box; }
+.dashboardPage :global(.modal-card) { scrollbar-width: thin; scrollbar-color: rgba(39, 41, 50, .24) transparent; }
+@media (max-width: 900px) { .dashboardSidebar { padding-top: 0; } .reviewEditActions { grid-template-columns: 1fr; } .dashboardPage :global(.modal-backdrop) { padding: 14px; } .dashboardPage :global(.modal-card) { max-height: calc(100vh - 28px); padding-right: clamp(18px, 5vw, 28px); } }
