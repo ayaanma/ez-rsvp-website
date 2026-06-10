@@ -271,13 +271,14 @@ export default function FindEventsPage() {
 
     if (!storedAddress) return;
 
+    const savedAddress = storedAddress;
     let cancelled = false;
 
     async function applyStoredAddress() {
-      setAddress(storedAddress);
+      setAddress(savedAddress);
 
       try {
-        const response = await fetch(`/api/geocode?q=${encodeURIComponent(storedAddress)}`);
+        const response = await fetch(`/api/geocode?q=${encodeURIComponent(savedAddress)}`);
         const data = (await response.json().catch(() => ({}))) as { suggestions?: AddressSuggestion[] };
         const firstSuggestion = data.suggestions?.[0];
 
