@@ -93,7 +93,6 @@ const signals: Signal[] = [
   },
 ];
 
-
 function PersonAvatar({
   member,
   className,
@@ -129,11 +128,7 @@ function GroupAvatarStack({
   return (
     <div className={styles.avatarStack} aria-label="Group members">
       {groupMembers.slice(0, 4).map((member) => (
-        <PersonAvatar
-          key={member.id}
-          member={member}
-          expandable
-        />
+        <PersonAvatar key={member.id} member={member} expandable />
       ))}
     </div>
   );
@@ -153,6 +148,17 @@ function statusLabel(status: string) {
   return status;
 }
 
+function formatMysteryPlanDateTime(value: string) {
+  const date = new Date(value);
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 function readinessScore(group: Group, ready: boolean) {
   const memberGoingCount = group.members.reduce((count, member) => {
     return count + (isGoing(group.memberStatuses?.[member.id] ?? "") ? 1 : 0);
@@ -163,19 +169,39 @@ function readinessScore(group: Group, ready: boolean) {
   return Math.round((goingCount / totalPeople) * 100);
 }
 
-function DetailIcon({ src, alt, fallback }: { src?: string; alt: string; fallback: string }) {
-  return src ? <img className="history-icon-img" src={src} alt={alt} /> : <span>{fallback}</span>;
+function DetailIcon({
+  src,
+  alt,
+  fallback,
+}: {
+  src?: string;
+  alt: string;
+  fallback: string;
+}) {
+  return src ? (
+    <img className="history-icon-img" src={src} alt={alt} />
+  ) : (
+    <span>{fallback}</span>
+  );
 }
 
 function TicketOverlay({
   event,
+  groups,
   onClose,
+  onAddEvent,
 }: {
   event: EventItem | null;
+  groups: Group[];
   onClose: () => void;
+  onAddEvent: (groupId: string, eventId: string) => void;
 }) {
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [groupPickerOpen, setGroupPickerOpen] = useState(false);
+
   if (!event) return null;
 
+  const selectedGroup = groups.find((group) => group.id === selectedGroupId);
   const displayEvent = {
     ...event,
     color: cardColorsByEventId[event.id] ?? event.color,
@@ -197,10 +223,15 @@ function TicketOverlay({
         >
           ×
         </button>
-        <p className={`page-kicker ${styles.ticketOverlayKicker}`}>Ticket preview.</p>
-        <h1 className={`modal-title ${styles.ticketOverlayTitle}`}>Event details</h1>
+        <p className={`page-kicker ${styles.ticketOverlayKicker}`}>
+          Ticket preview.
+        </p>
+        <h1 className={`modal-title ${styles.ticketOverlayTitle}`}>
+          Event details
+        </h1>
         <p className={`page-subtitle ${styles.ticketOverlaySubtitle}`}>
-          The exact event stays hidden until reveal time, but your price, timing, and comfort limits are set.
+          The exact event stays hidden until reveal time, but your price,
+          timing, and comfort limits are set.
         </p>
         <div className="modal-grid grid-2" style={{ alignItems: "start" }}>
           <div className="modal-details">
@@ -222,6 +253,73 @@ function TicketOverlay({
                 arrive.
               </p>
             </section>
+            <section className={`event-description-card ${styles.ticketGroupPanel}`}>
+              <div>
+                <h2>Add event to group</h2>
+                <p>Choose one of your current groups for this mystery ticket.</p>
+              </div>
+              <div
+                className={`custom-select ${groupPickerOpen ? "open" : ""}`}
+                tabIndex={0}
+                onBlur={(pickerEvent) => {
+                  if (!pickerEvent.currentTarget.contains(pickerEvent.relatedTarget as Node | null)) {
+                    setGroupPickerOpen(false);
+                  }
+                }}
+              >
+                <button
+                  type="button"
+                  className="custom-select-trigger"
+                  aria-haspopup="listbox"
+                  aria-expanded={groupPickerOpen}
+                  onClick={() => setGroupPickerOpen((current) => !current)}
+                >
+                  <span>{selectedGroup?.name ?? "No group selected"}</span>
+                  <span className="custom-select-arrow" aria-hidden="true">▾</span>
+                </button>
+                {groupPickerOpen && (
+                  <div className="custom-select-menu" role="listbox">
+                    <button
+                      type="button"
+                      className={`custom-select-option ${selectedGroupId === "" ? "selected" : ""}`}
+                      role="option"
+                      aria-selected={selectedGroupId === ""}
+                      onMouseDown={(pickerEvent) => pickerEvent.preventDefault()}
+                      onClick={() => {
+                        setSelectedGroupId("");
+                        setGroupPickerOpen(false);
+                      }}
+                    >
+                      No group selected
+                    </button>
+                    {groups.map((group) => (
+                      <button
+                        key={group.id}
+                        type="button"
+                        className={`custom-select-option ${selectedGroup?.id === group.id ? "selected" : ""}`}
+                        role="option"
+                        aria-selected={selectedGroup?.id === group.id}
+                        onMouseDown={(pickerEvent) => pickerEvent.preventDefault()}
+                        onClick={() => {
+                          setSelectedGroupId(group.id);
+                          setGroupPickerOpen(false);
+                        }}
+                      >
+                        {group.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => selectedGroup && onAddEvent(selectedGroup.id, displayEvent.id)}
+                disabled={!selectedGroup}
+              >
+                Add to group
+              </button>
+            </section>
           </div>
           <aside className="sidebar-card" style={{ alignSelf: "start" }}>
             <h2>Ticket preview</h2>
@@ -237,7 +335,11 @@ function TicketOverlay({
               </div>
               <div className="history-item">
                 <div className="history-icon">
-                  <DetailIcon src="/icons/map.svg" alt="Location" fallback="⌖" />
+                  <DetailIcon
+                    src="/icons/map.svg"
+                    alt="Location"
+                    fallback="⌖"
+                  />
                 </div>
                 <div>
                   <h3>Location</h3>
@@ -246,7 +348,11 @@ function TicketOverlay({
               </div>
               <div className="history-item">
                 <div className="history-icon">
-                  <DetailIcon src="/homepage-images/shield.svg" alt="Safety" fallback="✓" />
+                  <DetailIcon
+                    src="/homepage-images/shield.svg"
+                    alt="Safety"
+                    fallback="✓"
+                  />
                 </div>
                 <div>
                   <h3>Safety</h3>
@@ -255,7 +361,11 @@ function TicketOverlay({
               </div>
               <div className="history-item">
                 <div className="history-icon">
-                  <DetailIcon src="/icons/shirt.svg" alt="Dress code" fallback="◇" />
+                  <DetailIcon
+                    src="/icons/shirt.svg"
+                    alt="Dress code"
+                    fallback="◇"
+                  />
                 </div>
                 <div>
                   <h3>Dress code</h3>
@@ -268,7 +378,8 @@ function TicketOverlay({
               onClick={() => purchaseTickets(displayEvent)}
               style={{ marginTop: 24, width: "100%" }}
             >
-              <DetailIcon src="/icons/cart.svg" alt="Cart" fallback="↗" /> Purchase tickets
+              <DetailIcon src="/icons/cart.svg" alt="Cart" fallback="↗" />{" "}
+              Purchase tickets
             </button>
           </aside>
         </div>
@@ -435,7 +546,10 @@ function GroupOverlay({
         <p className={`page-kicker ${styles.overlayKicker}`}>Social circle.</p>
         <h1 className={`modal-title ${styles.overlayTitle}`}>{group.name}</h1>
 
-        <div className={`modal-grid grid-2 ${styles.groupOverlayGrid}`} style={{ alignItems: "start" }}>
+        <div
+          className={`modal-grid grid-2 ${styles.groupOverlayGrid}`}
+          style={{ alignItems: "start" }}
+        >
           <section
             className={`event-description-card ${styles.sharedPlanCard}`}
           >
@@ -500,7 +614,13 @@ function GroupOverlay({
                     member={member}
                     className={styles.memberAvatar}
                   />
-                  <div>
+                  <button
+                    type="button"
+                    className={styles.friendProfileButton}
+                    data-profile-name={member.name}
+                    data-profile-initials={member.initials}
+                    data-profile-tone={avatarToneForPerson(member)}
+                  >
                     <h3>{member.name}</h3>
                     <p>
                       {statusLabel(
@@ -508,7 +628,7 @@ function GroupOverlay({
                           "Haven't RSVP'd yet",
                       )}
                     </p>
-                  </div>
+                  </button>
                 </div>
               ))}
             </div>
@@ -546,7 +666,6 @@ export default function SocialPage() {
   const [activeTicket, setActiveTicket] = useState<EventItem | null>(null);
   const [manageFriendsOpen, setManageFriendsOpen] = useState(false);
   const [friendList, setFriendList] = useState(baseFriends);
-
   const visibleFriends = useMemo(() => friendList, [friendList]);
 
   function handleJoin(event: FormEvent) {
@@ -618,6 +737,27 @@ export default function SocialPage() {
     if (event) setActiveTicket(event);
   }
 
+  function handleAddEventToGroup(groupId: string, eventId: string) {
+    const event = events.find((item) => item.id === eventId);
+
+    if (!event) return;
+
+    const formattedTime = formatMysteryPlanDateTime(event.startTime);
+
+    setGroups((prev) =>
+      prev.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              upcomingPlan: "Mystery plan",
+              upcomingDateTime: formattedTime,
+            }
+          : group,
+      ),
+    );
+    setMessage(`Added a mystery plan for ${formattedTime}.`);
+  }
+
   function handleRemoveFriend(id: string) {
     setFriendList((prev) => prev.filter((friend) => friend.id !== id));
   }
@@ -657,10 +797,7 @@ export default function SocialPage() {
           <div className={styles.friendList}>
             {visibleFriends.map((friend) => (
               <div key={friend.id} className={styles.friendRow}>
-                <PersonAvatar
-                  member={friend}
-                  className={styles.friendAvatar}
-                />
+                <PersonAvatar member={friend} className={styles.friendAvatar} />
                 <button
                   type="button"
                   className={styles.friendProfileButton}
@@ -890,7 +1027,9 @@ export default function SocialPage() {
       />
       <TicketOverlay
         event={activeTicket}
+        groups={groups}
         onClose={() => setActiveTicket(null)}
+        onAddEvent={handleAddEventToGroup}
       />
       {manageFriendsOpen && (
         <ManageFriendsOverlay

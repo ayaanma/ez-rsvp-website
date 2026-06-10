@@ -6,13 +6,14 @@ const footerLinks = [
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/safety-trust", label: "Safety & Trust" },
   { href: "/support", label: "Support" },
+  { href: "/organizers", label: "For Organizers" },
 ] as const;
 
 export function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
-        <Link href="/" className="logo" aria-label="e-z.rsvp home">
+        <Link className="footer-brand" href="/">
           e-z.rsvp
         </Link>
 
@@ -24,7 +25,7 @@ export function Footer() {
           ))}
         </nav>
 
-        <p>© 2026 e-z.rsvp.</p>
+        <p className="footer-copy">© 2026 e-z.rsvp.</p>
       </div>
     </footer>
   );

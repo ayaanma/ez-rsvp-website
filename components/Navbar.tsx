@@ -21,7 +21,11 @@ const publicLinks: NavLink[] = [
 
 function initialsFromName(name?: string) {
   const parts = (name || "e-z user").trim().split(/\s+/).filter(Boolean);
-  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase()).join("") || "EZ";
+
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "EZ";
 }
 
 export function Navbar() {
@@ -29,20 +33,25 @@ export function Navbar() {
   const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [initials, setInitials] = useState("EZ");
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const syncAuth = () => {
       const user = getStoredUser();
       const loggedIn = Boolean(user) || isLoggedIn();
+
       setAuthenticated(loggedIn);
       setInitials(initialsFromName(user?.name));
+      setAvatarUrl(user?.avatarUrl || undefined);
+
       if (!loggedIn) setMenuOpen(false);
     };
 
     syncAuth();
     window.addEventListener("storage", syncAuth);
     window.addEventListener("ez-auth-change", syncAuth);
+
     return () => {
       window.removeEventListener("storage", syncAuth);
       window.removeEventListener("ez-auth-change", syncAuth);
@@ -53,8 +62,11 @@ export function Navbar() {
     clearStoredUser();
     setAuthenticated(false);
     setInitials("EZ");
+    setAvatarUrl(undefined);
     setMenuOpen(false);
+
     await fetch("/api/auth/logout", { method: "POST", cache: "no-store" }).catch(() => null);
+
     clearStoredUser();
     router.replace("/");
     router.refresh();
@@ -65,12 +77,14 @@ export function Navbar() {
   return (
     <header className="site-header">
       <div className="header-inner">
-        <Link className="logo" href="/" aria-label="e-z.rsvp home">
+        <Link className="logo" href="/">
           e-z.rsvp
         </Link>
-        <nav className="nav-links" aria-label="Primary navigation">
+
+        <nav className="nav-links" aria-label="Main navigation">
           {links.map((link) => {
             const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+
             return (
               <Link key={link.href} className={`nav-link ${active ? "active" : ""}`} href={link.href}>
                 {link.label}
@@ -78,6 +92,7 @@ export function Navbar() {
             );
           })}
         </nav>
+
         <div className="header-actions">
           {authenticated && (
             <div
@@ -86,18 +101,22 @@ export function Navbar() {
               onMouseLeave={() => setMenuOpen(false)}
             >
               <button
+                type="button"
                 className="icon-button profile-trigger"
                 onClick={() => setMenuOpen((value) => !value)}
                 aria-label="Open account menu"
                 aria-haspopup="menu"
                 aria-expanded={menuOpen}
               >
-                <span className="avatar-initials">{initials}</span>
+                {avatarUrl ? <img className="navbar-avatar-img" src={avatarUrl} alt="Your profile" /> : initials}
               </button>
+
               {menuOpen && (
-                <div className="profile-menu">
-                  <Link href="/account">Settings</Link>
-                  <button type="button" onClick={handleLogout}>
+                <div className="profile-menu" role="menu">
+                  <Link href="/account" role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Settings
+                  </Link>
+                  <button type="button" role="menuitem" onClick={handleLogout}>
                     Log out
                   </button>
                 </div>

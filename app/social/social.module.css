@@ -671,7 +671,6 @@
   filter: brightness(0) invert(1);
 }
 
-
 .friendProfileButton {
   appearance: none;
   border: 0;
@@ -705,4 +704,71 @@
 .manageFriendRow:has(.friendProfileButton:focus-visible) {
   background: var(--wash-soft);
   border-radius: 16px;
+}
+
+.eventPanel {
+  margin-top: 20px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.eventPanel h3 {
+  margin: 0;
+  color: var(--shadow-grey);
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.eventPanel p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  line-height: 1.4;
+  font-size: 0.92rem;
+}
+
+.eventPicker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.eventPicker select {
+  min-height: 48px;
+}
+
+@media (max-width: 640px) {
+  .eventPicker {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ticketGroupPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.ticketGroupPanel h2 {
+  margin: 0;
+}
+
+.ticketGroupPanel p {
+  margin: 6px 0 0;
+}
+
+.ticketGroupPanel :global(.custom-select) {
+  width: 100%;
+}
+
+.memberRow .friendProfileButton {
+  width: 100%;
+}
+
+.memberRow:has(.friendProfileButton:hover),
+.memberRow:has(.friendProfileButton:focus-visible) {
+  background: transparent;
 }

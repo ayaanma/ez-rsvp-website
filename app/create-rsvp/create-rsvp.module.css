@@ -75,3 +75,156 @@
   margin-bottom: 18px !important;
   max-width: 620px;
 }
+
+.purchaseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.purchaseButton img {
+  filter: brightness(0) invert(1);
+}
+
+.ticketGroupPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.ticketGroupPanel h2 {
+  margin: 0;
+}
+
+.ticketGroupPanel p {
+  margin: 6px 0 0;
+}
+
+.ticketGroupPanel :global(.custom-select) {
+  width: 100%;
+}
+
+.pageShell {
+  width: min(100%, 1520px);
+  margin: 0 auto;
+  padding: 48px 28px 72px;
+  display: grid;
+  grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+  gap: 46px;
+  align-items: start;
+  overflow: visible;
+}
+
+.filterPanel {
+  position: sticky;
+  top: 112px;
+  align-self: start;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 34px;
+  background: #fff;
+  padding: 34px 30px;
+  box-shadow: 0 20px 60px rgba(39, 41, 50, 0.06);
+  overflow: visible;
+}
+
+.filterPanel :global(h2) {
+  margin: 0 0 28px;
+}
+
+.filterPanel :global(.form-section) {
+  margin-bottom: 28px;
+}
+
+.filterPanel :global(.small-label) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.filterPanel :global(.input) {
+  width: 100%;
+}
+
+.filterPanel :global(.toggle-card) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  margin: 28px 0;
+}
+
+.filterPanel :global(.toggle-card p) {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.filterPanel :global(.chip-row) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.contentPanel {
+  min-width: 0;
+  overflow: visible;
+  padding-top: 8px;
+}
+
+.contentPanel :global(.page-kicker) {
+  margin-bottom: 8px;
+}
+
+.contentPanel :global(.page-title) {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.contentPanel :global(.page-subtitle) {
+  max-width: 880px;
+  margin-bottom: 34px;
+}
+
+.eventGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
+  gap: 28px;
+  overflow: visible;
+  padding: 0 10px 20px 0;
+}
+
+.eventGrid :global(.card-button) {
+  width: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 1100px) {
+  .pageShell {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 34px 22px 64px;
+  }
+
+  .filterPanel {
+    position: relative;
+    top: auto;
+  }
+
+  .eventGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pageShell {
+    padding: 24px 16px 56px;
+  }
+
+  .filterPanel {
+    border-radius: 28px;
+    padding: 26px 22px;
+  }
+}

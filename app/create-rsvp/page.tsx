@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { categories, events } from "@/lib/mock-data";
+import { categories, events, groups as initialGroups } from "@/lib/mock-data";
 import { RSVPCard } from "@/components/RSVPCard";
 import { purchaseTickets } from "@/lib/browser-actions";
-import type { EventItem } from "@/types";
+import { getStoredUser } from "@/lib/auth-client";
+import type { EventItem, Group } from "@/types";
 import styles from "./create-rsvp.module.css";
 
 type Coordinates = {
@@ -64,22 +65,42 @@ function distanceInMiles(from: Coordinates, to: Coordinates) {
   return earthRadiusMiles * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+function formatMysteryPlanDateTime(value: string) {
+  const date = new Date(value);
+
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 function DetailIcon({ src, alt, fallback }: { src?: string; alt: string; fallback: string }) {
   return src ? <img className="history-icon-img" src={src} alt={alt} /> : <span>{fallback}</span>;
 }
 
 function EventPurchaseOverlay({
   event,
+  groups,
   onClose,
+  onAddEvent,
   mysteryMode,
   hiddenTitle,
 }: {
   event: EventItem | null;
+  groups: Group[];
   onClose: () => void;
+  onAddEvent: (groupId: string, eventId: string) => void;
   mysteryMode: boolean;
   hiddenTitle?: string;
 }) {
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [groupPickerOpen, setGroupPickerOpen] = useState(false);
+
   if (!event) return null;
+
+  const selectedGroup = groups.find((group) => group.id === selectedGroupId);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -97,6 +118,33 @@ function EventPurchaseOverlay({
               <h2>What you can expect</h2>
               <p>A verified public venue, clear entry instructions, and a plan that fits your selected budget and radius.</p>
               <p>Once your reveal unlocks, you’ll receive the venue name, address, dress guidance, safety notes, and what to do when you arrive.</p>
+            </section>
+            <section className={`event-description-card ${styles.ticketGroupPanel}`}>
+              <div>
+                <h2>Add event to group</h2>
+                <p>Choose one of your current groups for this mystery ticket.</p>
+              </div>
+              <div className={`custom-select ${groupPickerOpen ? "open" : ""}`} tabIndex={0} onBlur={(pickerEvent) => { if (!pickerEvent.currentTarget.contains(pickerEvent.relatedTarget as Node | null)) setGroupPickerOpen(false); }}>
+                <button type="button" className="custom-select-trigger" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((current) => !current)}>
+                  <span>{selectedGroup?.name ?? "No group selected"}</span>
+                  <span className="custom-select-arrow" aria-hidden="true">▾</span>
+                </button>
+                {groupPickerOpen && (
+                  <div className="custom-select-menu" role="listbox">
+                    <button type="button" className={`custom-select-option ${selectedGroupId === "" ? "selected" : ""}`} role="option" aria-selected={selectedGroupId === ""} onMouseDown={(pickerEvent) => pickerEvent.preventDefault()} onClick={() => { setSelectedGroupId(""); setGroupPickerOpen(false); }}>
+                      No group selected
+                    </button>
+                    {groups.map((group) => (
+                      <button key={group.id} type="button" className={`custom-select-option ${selectedGroup?.id === group.id ? "selected" : ""}`} role="option" aria-selected={selectedGroup?.id === group.id} onMouseDown={(pickerEvent) => pickerEvent.preventDefault()} onClick={() => { setSelectedGroupId(group.id); setGroupPickerOpen(false); }}>
+                        {group.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button type="button" className="btn btn-secondary" onClick={() => selectedGroup && onAddEvent(selectedGroup.id, event.id)} disabled={!selectedGroup}>
+                Add to group
+              </button>
             </section>
           </div>
           <aside className="sidebar-card" style={{ alignSelf: "start" }}>
@@ -139,8 +187,8 @@ function EventPurchaseOverlay({
                 </div>
               </div>
             </div>
-            <button className="btn btn-primary" onClick={() => purchaseTickets(event)} style={{ marginTop: 24, width: "100%" }}>
-              <DetailIcon src="/icons/ticket.svg" alt="Ticket" fallback="↗" /> Purchase tickets
+            <button className={`btn btn-primary ${styles.purchaseButton}`} onClick={() => purchaseTickets(event)} style={{ marginTop: 24, width: "100%" }}>
+              <DetailIcon src="/icons/cart.svg" alt="Cart" fallback="↗" /> Purchase tickets
             </button>
           </aside>
         </div>
@@ -167,6 +215,7 @@ export default function FindEventsPage() {
   const [addressError, setAddressError] = useState("");
   const [radius, setRadius] = useState(10);
   const [maxPrice, setMaxPrice] = useState(75);
+  const [groups, setGroups] = useState(initialGroups);
   const [mysteryMode, setMysteryMode] = useState(true);
   const [selected, setSelected] = useState<string[]>([]);
   const [activeEvent, setActiveEvent] = useState<{ event: EventItem; hiddenTitle: string } | null>(null);
@@ -218,6 +267,40 @@ export default function FindEventsPage() {
   }, [address, selectedLocation.label]);
 
   useEffect(() => {
+    const storedAddress = getStoredUser()?.defaultAddress?.trim();
+
+    if (!storedAddress) return;
+
+    let cancelled = false;
+
+    async function applyStoredAddress() {
+      setAddress(storedAddress);
+
+      try {
+        const response = await fetch(`/api/geocode?q=${encodeURIComponent(storedAddress)}`);
+        const data = (await response.json().catch(() => ({}))) as { suggestions?: AddressSuggestion[] };
+        const firstSuggestion = data.suggestions?.[0];
+
+        if (!cancelled && response.ok && firstSuggestion) {
+          setAddress(firstSuggestion.label);
+          setSelectedLocation(firstSuggestion);
+        }
+      } catch {
+        if (!cancelled) {
+          setAddress(defaultLocation.label);
+          setSelectedLocation(defaultLocation);
+        }
+      }
+    }
+
+    applyStoredAddress();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const eventId = params.get("event");
     if (!eventId) return;
@@ -249,6 +332,26 @@ export default function FindEventsPage() {
     return filteredEvents;
   }, [maxPrice, selected, mysteryMode, sortBy, radius, selectedLocation]);
 
+  function handleAddEventToGroup(groupId: string, eventId: string) {
+    const event = events.find((item) => item.id === eventId);
+
+    if (!event) return;
+
+    const formattedTime = formatMysteryPlanDateTime(event.startTime);
+
+    setGroups((prev) =>
+      prev.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              upcomingPlan: "Mystery plan",
+              upcomingDateTime: formattedTime,
+            }
+          : group,
+      ),
+    );
+  }
+
   function chooseAddress(suggestion: AddressSuggestion) {
     setAddress(suggestion.label);
     setSelectedLocation(suggestion);
@@ -263,8 +366,8 @@ export default function FindEventsPage() {
   }
 
   return (
-    <main className="main-shell layout-with-sidebar">
-      <aside className="filter-panel glass-panel">
+    <main className={`main-shell layout-with-sidebar ${styles.pageShell}`}>
+      <aside className={`filter-panel glass-panel ${styles.filterPanel}`}>
         <h2>Filters</h2>
         <div className="form-section">
           <label className="small-label" htmlFor="location">
@@ -347,11 +450,11 @@ export default function FindEventsPage() {
           </div>
         </div>
       </aside>
-      <section className="content-panel">
+      <section className={`content-panel ${styles.contentPanel}`}>
         <p className="page-kicker">Find your next surprise.</p>
         <h1 className="page-title">Find events.</h1>
         <p className="page-subtitle">Browse mystery-ready plans and filter by comfort level. Mystery mode hides exact categories on cards.</p>
-        <div className="event-grid">
+        <div className={`event-grid ${styles.eventGrid}`}>
           {filtered.map((event) => {
             const displayEvent = prepareDisplayEvent(event);
             const hiddenTitle = hiddenPhraseByEventId[event.id] ?? "Your next adventure.";
@@ -369,7 +472,7 @@ export default function FindEventsPage() {
           </div>
         )}
       </section>
-      <EventPurchaseOverlay event={activeEvent?.event ?? null} hiddenTitle={activeEvent?.hiddenTitle} onClose={() => setActiveEvent(null)} mysteryMode={mysteryMode} />
+      <EventPurchaseOverlay event={activeEvent?.event ?? null} groups={groups} hiddenTitle={activeEvent?.hiddenTitle} onClose={() => setActiveEvent(null)} onAddEvent={handleAddEventToGroup} mysteryMode={mysteryMode} />
     </main>
   );
 }

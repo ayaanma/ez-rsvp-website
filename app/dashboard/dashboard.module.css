@@ -31,3 +31,7 @@
 .dashboardPage :global(.modal-card::-webkit-scrollbar-thumb:hover) { background: rgba(39, 41, 50, .28); border: 3px solid transparent; background-clip: padding-box; }
 .dashboardPage :global(.modal-card) { scrollbar-width: thin; scrollbar-color: rgba(39, 41, 50, .24) transparent; }
 @media (max-width: 900px) { .dashboardSidebar { padding-top: 0; } .reviewEditActions { grid-template-columns: 1fr; } .dashboardPage :global(.modal-backdrop) { padding: 14px; } .dashboardPage :global(.modal-card) { max-height: calc(100vh - 28px); padding-right: clamp(18px, 5vw, 28px); } }
+.dashboardPage :global(.modal-card .rsvp-card-bg.image-bg.image-blurred) {
+  filter: blur(7px) saturate(1.03) contrast(.98) !important;
+  transform: scale(1.025) !important;
+}
